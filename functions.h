@@ -37,7 +37,7 @@ typedef struct monde{
 
 
 /* PROTOTYPES DES FONCTIONS */
-void testMLV(void);
+void initialiserFenetre(void);
 void initialiserMonde(Monde *monde);
 void affichePlateau(Monde *monde);
 int creerUnite(char type, UListe * unite);

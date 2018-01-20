@@ -1,8 +1,8 @@
 #include "functions.h"
 
-/*Fonction principale qui lance une partie*/
+/* Fonction principale qui lance une partie */
 int main() {
-	testMLV();
-    //gererPartie();
+	initialiserFenetre();
+    gererPartie();
     return 0;
 }

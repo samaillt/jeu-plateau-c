@@ -1,19 +1,10 @@
 #include "functions.h"
 
-void testMLV(void){
+void initialiserFenetre(void){
     //
     // Créé et affiche la fenêtre
     //
-    MLV_create_window( "test", "hello world", 640, 480 );
-
-    //
-    // Affiche "Bonjour !" a l'écran 
-    //
-    MLV_draw_text(
-        10, 120, 
-        "OK !",
-        MLV_COLOR_MAGENTA
-    );
+    MLV_create_window( "Jeu de plateau", "hello world", 800, 600 );
 
     //
     // Met a jour l'affichage.
@@ -23,12 +14,12 @@ void testMLV(void){
     //
     // Attend 10 secondes avant la fin du programme.
     //
-    MLV_wait_seconds( 10 );
+    // MLV_wait_seconds( 1 );
 
     //
     // Ferme la fenêtre
     //
-    MLV_free_window();
+    // MLV_free_window();
 }
 
 /* Fonction qui ne retourne rien et prend en paramètre le monde et qui met la valeur de tous ses pointeurs et les cases du plateau a NULL et le compteur de tours a zero */
@@ -79,6 +70,56 @@ void affichePlateau(Monde *monde){
         }
     }
     printf("   +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+\n\n");
+
+    /* Affichage plateau avec MLV */
+
+    // Affiche Les abscisses à l'écran 
+    int spaceX, spaceY;
+    char indexX[2], indexY[2];
+    for (k = 0; k < LARG; k++) {
+        sprintf(indexX, "%d", k);
+        spaceX = k*30 + 50;
+        MLV_draw_text(
+            spaceX, 10,
+            indexX,
+            MLV_COLOR_WHITE
+        );
+    }
+    //Affiche les cases
+    MLV_Color background_color;
+    for (i = 0; i < LONG; i++){
+
+        if (i<10) {
+            sprintf(indexY, " %d", i);
+        } else {
+            sprintf(indexY, "%d", i);
+        }
+        
+        spaceY = i*30 + 50;
+        MLV_draw_text(
+            10, spaceY,
+            indexY,
+            MLV_COLOR_WHITE
+        );
+        
+        for (j=0; j<LARG; j++){
+            if (monde->plateau[i][j]) {
+                if (monde->plateau[i][j]->couleur == BLEU) {
+                    background_color = MLV_COLOR_BLUE;
+                } else if (monde->plateau[i][j]->couleur == ROUGE) {
+                    background_color = MLV_COLOR_RED;
+                }
+            } else {
+                background_color = MLV_COLOR_WHITE;
+            }
+
+            MLV_draw_filled_rectangle(j*30 + 40, i*30 + 40, 30, 30, background_color);
+            MLV_draw_rectangle(j*30 + 40, i*30 + 40, 30, 30, MLV_COLOR_BLACK);
+        }
+    }
+
+    //void MLV_draw_rectangle (int x, int y, int width, int height, MLV_Color color);
+    MLV_actualise_window();
 }
 
 /* Fonction qui retourne un entier servant à la gestion d'erreur et prend en paramètre un type et une liste d'unité et alloue une nouvelle unite de type type, et stocke son adresse dans *unite */
