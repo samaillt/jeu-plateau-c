@@ -4,7 +4,7 @@ void initialiserFenetre(void){
     //
     // Créé et affiche la fenêtre
     //
-    MLV_create_window( "Jeu de plateau", "hello world", 800, 600 );
+    MLV_create_window( "Jeu de plateau", "hello world", (18+1+5)*COTECASE, (12+1+3)*COTECASE );
 
     //
     // Met a jour l'affichage.
@@ -78,9 +78,9 @@ void affichePlateau(Monde *monde){
     char indexX[2], indexY[2];
     for (k = 0; k < LARG; k++) {
         sprintf(indexX, "%d", k);
-        spaceX = k*30 + 50;
+        spaceX = k*COTECASE + 50;
         MLV_draw_text(
-            spaceX, 10,
+            spaceX+COTECASE/3, COTECASE/3,
             indexX,
             MLV_COLOR_WHITE
         );
@@ -95,9 +95,9 @@ void affichePlateau(Monde *monde){
             sprintf(indexY, "%d", i);
         }
         
-        spaceY = i*30 + 50;
+        spaceY = i*COTECASE + 50;
         MLV_draw_text(
-            10, spaceY,
+            COTECASE/3, spaceY+COTECASE/3,
             indexY,
             MLV_COLOR_WHITE
         );
@@ -113,8 +113,8 @@ void affichePlateau(Monde *monde){
                 background_color = MLV_COLOR_WHITE;
             }
 
-            MLV_draw_filled_rectangle(j*30 + 40, i*30 + 40, 30, 30, background_color);
-            MLV_draw_rectangle(j*30 + 40, i*30 + 40, 30, 30, MLV_COLOR_BLACK);
+            MLV_draw_filled_rectangle(j*COTECASE + COTECASE, i*COTECASE + COTECASE, COTECASE, COTECASE, background_color);
+            MLV_draw_rectangle(j*COTECASE + COTECASE, i*COTECASE + COTECASE, COTECASE, COTECASE, MLV_COLOR_BLACK);
         }
     }
 

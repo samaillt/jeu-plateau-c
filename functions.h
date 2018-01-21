@@ -10,6 +10,9 @@
 /* dimension du monde en nombre de cases */
 #define LONG 12
 #define LARG 18
+
+/* dimension du côté d'une case pour l'affichage graphique */
+#define COTECASE 50
 /* l'origine est en haut a gauche */
 
 #define ROUGE 'R' /*identifiant du premier joueur */
