@@ -6,6 +6,7 @@ void initialiserFenetre(void){
     //
     MLV_create_window( "Jeu de plateau", "hello world", (18+1+5)*COTECASE, (12+1+3)*COTECASE );
 
+    MLV_draw_filled_rectangle(0, 0, 800, 600, MLV_rgba(18, 18, 18, 255));
     //
     // Met a jour l'affichage.
     //
@@ -79,42 +80,49 @@ void affichePlateau(Monde *monde){
     for (k = 0; k < LARG; k++) {
         sprintf(indexX, "%d", k);
         spaceX = k*COTECASE + 50;
+        if (k<10) {
+            spaceX = k*30 + 50;
+        } else {
+            spaceX = k*30 + 45;
+        }
+        
         MLV_draw_text(
             spaceX+COTECASE/3, COTECASE/3,
             indexX,
-            MLV_COLOR_WHITE
+            MLV_COLOR_GREY
         );
     }
     //Affiche les cases
     MLV_Color background_color;
     for (i = 0; i < LONG; i++){
 
+        //Affiche les ordonnées
         if (i<10) {
             sprintf(indexY, " %d", i);
         } else {
             sprintf(indexY, "%d", i);
         }
         
-        spaceY = i*COTECASE + 50;
+        spaceY = i*30 + 50;
         MLV_draw_text(
             COTECASE/3, spaceY+COTECASE/3,
             indexY,
-            MLV_COLOR_WHITE
+            MLV_COLOR_GREY
         );
         
         for (j=0; j<LARG; j++){
             if (monde->plateau[i][j]) {
                 if (monde->plateau[i][j]->couleur == BLEU) {
-                    background_color = MLV_COLOR_BLUE;
+                    background_color = MLV_COLOR_SKYBLUE3;
                 } else if (monde->plateau[i][j]->couleur == ROUGE) {
-                    background_color = MLV_COLOR_RED;
+                    background_color = MLV_rgba(240,70,70,255);
                 }
             } else {
-                background_color = MLV_COLOR_WHITE;
+                background_color = MLV_COLOR_GREY;
             }
 
-            MLV_draw_filled_rectangle(j*COTECASE + COTECASE, i*COTECASE + COTECASE, COTECASE, COTECASE, background_color);
-            MLV_draw_rectangle(j*COTECASE + COTECASE, i*COTECASE + COTECASE, COTECASE, COTECASE, MLV_COLOR_BLACK);
+            MLV_draw_filled_rectangle(j*30 + 40, i*30 + 40, 30, 30, background_color);
+            MLV_draw_rectangle(j*30 + 40, i*30 + 40, 30, 30, MLV_COLOR_BLACK);
         }
     }
 
@@ -139,8 +147,11 @@ int creerUnite(char type, UListe * unite){
 /* Fonction qui ne retourne rien et prend en parametre une unite, sa couleur et le monde et qui permet à l'utilisateur d'entrer ses coordonnées en début de partie */
 void positionnerUnite(Unite *unite, Monde *monde, char couleur){
     int posX, posY;
+    char message[200];
     affichePlateau(monde);
     do {
+        sprintf(message, "Positionnement de l'unité : %c%c", unite->genre, couleur);
+        ecrireMessage(message);
         printf("Positionnement de l'unité : %c%c\n", unite->genre, couleur);
         printf("Entrez la position X suivie de la position Y : \n");
         scanf(" %d %d", &posX, &posY);
@@ -293,7 +304,7 @@ int deplacerOuAttaquer(Unite *unite, Monde *monde, int destX, int destY) {
 /* Fonction qui ne retourne rien et prend en paramètre le joueur et le monde et qui gère toutes les actions d’un joueur pendant son tour */
 void gererDemiTour(char joueur, Monde *monde) {
     /* Parcourir les unités du joueur */
-    int choix, x, y;
+    int choix, x, y, i, j;
     char finDeTour;
     UListe liste;
     
@@ -309,6 +320,18 @@ void gererDemiTour(char joueur, Monde *monde) {
         while(actuel != NULL) {
             printf("Unité actuelle : %c%c, (%d, %d)\n", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
             printf("Que souhaitez-vous faire ? (1 : Déplacer/Attaquer, 2 : Ne rien faire)\n");
+            for (i = -1; i <= 1; ++i)
+            {
+                for (j = -1; j <= 1; ++j)
+                {
+                    if (monde->plateau[actuel->posY + j][actuel->posX + i] == NULL)
+                    {
+                        MLV_draw_filled_rectangle((actuel->posX*30) + (i*30 + 40), (actuel->posY*30) + (j*30 + 40), 30, 30, MLV_COLOR_LIGHT_SEA_GREEN);
+                        MLV_draw_rectangle((actuel->posX*30) + (i*30 + 40), (actuel->posY*30) + (j*30 + 40), 30, 30, MLV_COLOR_BLACK);
+                    }
+                }
+            }
+            MLV_actualise_window();
             scanf(" %d", &choix);
             if (choix == 1) {
                 printf("L'utilisateur souhaite se déplacer ou attaquer.\n");
@@ -365,7 +388,7 @@ void gererPartie(void){
     int arreterPartie;
     arreterPartie = 0;
     Unite *u1, *u2, *u3, *u4, *u5, *u6; /* Déclaration des unités */
-    // Unite *u1, *u4; /* Déclaration des unités */
+    //Unite *u1, *u4; /* Déclaration des unités */
     initialiserMonde(&monde); /* Initialisaton du monde */
     
     /* Création et placement des unités bleues */
@@ -423,4 +446,11 @@ void afficherListes(Monde monde){
             actuel = actuel->suiv;
         }
     }
+}
+
+void ecrireMessage(char message[]){
+    MLV_draw_filled_rectangle(45, 450, 300, 100, MLV_COLOR_GREY);
+    MLV_draw_rectangle(45, 450, 300, 100, MLV_COLOR_WHITE);
+    MLV_draw_text(55, 460, message, MLV_COLOR_BLACK);
+    MLV_actualise_window();
 }

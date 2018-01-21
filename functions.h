@@ -56,4 +56,7 @@ void viderMonde(Monde *monde);
 void gererPartie(void);
 void afficherListes(Monde monde);
 
+/* MLV Functions */
+void ecrireMessage(char message[]);
+
 #endif
