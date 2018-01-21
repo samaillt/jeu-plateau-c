@@ -19,6 +19,8 @@
 
 /*Fonction principale qui lance une partie*/
 int main() {
-	
+	srand(time(NULL));
+    int nbgen=rand()%9+1;    //entre 1-9
+    printf("%d\n",nbgen);    teste affichage
     return 0;
 }
