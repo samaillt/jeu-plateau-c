@@ -4,9 +4,12 @@ void initialiserFenetre(void){
     //
     // Créé et affiche la fenêtre
     //
-    MLV_create_window( "Jeu de plateau", "hello world", (18+1+5)*COTECASE, (12+1+3)*COTECASE );
+    int window_width = (LARG+1+5)*COTECASE;
+    int window_height = (LARG+1+5)*COTECASE;
+    MLV_create_window( "Jeu de plateau", "hello world", window_width, window_height );
 
-    MLV_draw_filled_rectangle(0, 0, 800, 600, MLV_rgba(18, 18, 18, 255));
+    //Affiche un fond gris
+    MLV_draw_filled_rectangle(0, 0, window_width, window_height, MLV_rgba(18, 18, 18, 255));
     //
     // Met a jour l'affichage.
     //
@@ -79,11 +82,10 @@ void affichePlateau(Monde *monde){
     char indexX[2], indexY[2];
     for (k = 0; k < LARG; k++) {
         sprintf(indexX, "%d", k);
-        spaceX = k*COTECASE + 50;
         if (k<10) {
-            spaceX = k*30 + 50;
+            spaceX = k*COTECASE + 50;
         } else {
-            spaceX = k*30 + 45;
+            spaceX = k*COTECASE + 45;
         }
         
         MLV_draw_text(
@@ -103,7 +105,7 @@ void affichePlateau(Monde *monde){
             sprintf(indexY, "%d", i);
         }
         
-        spaceY = i*30 + 50;
+        spaceY = i*COTECASE + 50;
         MLV_draw_text(
             COTECASE/3, spaceY+COTECASE/3,
             indexY,
@@ -121,8 +123,8 @@ void affichePlateau(Monde *monde){
                 background_color = MLV_COLOR_GREY;
             }
 
-            MLV_draw_filled_rectangle(j*30 + 40, i*30 + 40, 30, 30, background_color);
-            MLV_draw_rectangle(j*30 + 40, i*30 + 40, 30, 30, MLV_COLOR_BLACK);
+            MLV_draw_filled_rectangle(j*COTECASE + 40, i*COTECASE + 40, COTECASE, COTECASE, background_color);
+            MLV_draw_rectangle(j*COTECASE + 40, i*COTECASE + 40, COTECASE, COTECASE, MLV_COLOR_BLACK);
         }
     }
 
@@ -326,8 +328,8 @@ void gererDemiTour(char joueur, Monde *monde) {
                 {
                     if (monde->plateau[actuel->posY + j][actuel->posX + i] == NULL)
                     {
-                        MLV_draw_filled_rectangle((actuel->posX*30) + (i*30 + 40), (actuel->posY*30) + (j*30 + 40), 30, 30, MLV_COLOR_LIGHT_SEA_GREEN);
-                        MLV_draw_rectangle((actuel->posX*30) + (i*30 + 40), (actuel->posY*30) + (j*30 + 40), 30, 30, MLV_COLOR_BLACK);
+                        MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_LIGHT_SEA_GREEN);
+                        MLV_draw_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_BLACK);
                     }
                 }
             }
@@ -449,8 +451,8 @@ void afficherListes(Monde monde){
 }
 
 void ecrireMessage(char message[]){
-    MLV_draw_filled_rectangle(45, 450, 300, 100, MLV_COLOR_GREY);
-    MLV_draw_rectangle(45, 450, 300, 100, MLV_COLOR_WHITE);
-    MLV_draw_text(55, 460, message, MLV_COLOR_BLACK);
+    MLV_draw_filled_rectangle(45, 550, 500, 100, MLV_COLOR_GREY);
+    MLV_draw_rectangle(45, 550, 500, 100, MLV_COLOR_WHITE);
+    MLV_draw_text(55, 560, message, MLV_COLOR_BLACK);
     MLV_actualise_window();
 }
