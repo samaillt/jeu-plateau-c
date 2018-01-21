@@ -451,8 +451,13 @@ void afficherListes(Monde monde){
 }
 
 void ecrireMessage(char message[]){
-    MLV_draw_filled_rectangle(45, 550, 500, 100, MLV_COLOR_GREY);
-    MLV_draw_rectangle(45, 550, 500, 100, MLV_COLOR_WHITE);
-    MLV_draw_text(55, 560, message, MLV_COLOR_BLACK);
+    MLV_draw_filled_rectangle(45, 550, 500, 100, MLV_rgba(18,18,18,255));
+    MLV_draw_adapted_text_box(
+        45, 550,
+        message,
+        10,
+        MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY,
+        MLV_TEXT_LEFT
+    );
     MLV_actualise_window();
 }
