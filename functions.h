@@ -40,6 +40,7 @@ typedef struct monde{
 
 
 /* PROTOTYPES DES FONCTIONS */
+int random_0_1(void);
 void initialiserFenetre(void);
 void initialiserMonde(Monde *monde);
 void affichePlateau(Monde *monde);

@@ -1,5 +1,10 @@
 #include "functions.h"
 
+int random_0_1(void){
+    srand(time(NULL));
+    return (rand()&1);
+}
+
 void initialiserFenetre(void){
     //
     // Créé et affiche la fenêtre
@@ -359,10 +364,19 @@ void gererDemiTour(char joueur, Monde *monde) {
 
 /* Fonction qui ne retourne rien et prend en paramètre le monde et qui gère un tour de jeu complet */
 void gererTour(Monde *monde){
-    char joueur1 = BLEU; /* Déclaration et initialisation du joueur bleu */
-    char joueur2 = ROUGE; /* Déclaration et initialisation du joueur rouge */
-    gererDemiTour(joueur1, monde); /* Tour du joueur 1 */
-    gererDemiTour(joueur2, monde); /* Tour du joueur 2 */
+    char joueurBleu = BLEU; /* Déclaration et initialisation du joueur bleu */
+    char joueurRouge = ROUGE; /* Déclaration et initialisation du joueur rouge */
+    int nbAlea = random_0_1();
+    if (nbAlea == 0){
+        printf("C'est au joueur Bleu de commencer\n");
+        gererDemiTour(joueurBleu, monde); /* Tour du joueur 1 */
+        gererDemiTour(joueurRouge, monde); /* Tour du joueur 2 */
+    }
+    else{
+        printf("C'est au joueur Rouge de commencer\n");
+        gererDemiTour(joueurRouge, monde); /* Tour du joueur 1 */
+        gererDemiTour(joueurBleu, monde); /* Tour du joueur 2 */
+    }
     monde->tour+=1; /* Incrémentation du compteur de tours */
 }
 

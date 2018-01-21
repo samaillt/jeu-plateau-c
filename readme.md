@@ -1,5 +1,5 @@
 # Améliorations intéressantes à faire :
-- A chaque tour, choisir à l’aléatoire le joueur qui joue en premier.
+- A chaque tour, choisir à l’aléatoire le joueur qui joue en premier. DONE
 - Ajouter un système de points d'attaque / défense / vie (avec à chaque attaque ou défense une valeur fixe +- une petite valeur aléatoire)
 - Ajouter la possibilité de gérer les points de mouvement. Les serviteurs et les guerriers pourront désormais se déplacer de jusqu’à deux cases
 - Rajouter une unité Reine qui peut produire des unités (avec limite max d'unité et donc une valeur pour chaque unité ex serf : 1 et guerrier : 2)
