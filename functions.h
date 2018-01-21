@@ -12,7 +12,7 @@
 #define LARG 18
 
 /* dimension du côté d'une case pour l'affichage graphique */
-#define COTECASE 40
+#define COTECASE 45
 /* l'origine est en haut a gauche */
 
 #define ROUGE 'R' /*identifiant du premier joueur */

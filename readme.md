@@ -12,6 +12,7 @@
 - Cliquer sur les cases pour se positionner, se déplacer, attaquer.
 - Afficher tous les textes dans le carré correspondant
 
+Penser à libérer les images à la suppression du perso ?
 
 
 - RAPPOOOOOORRTT !!!!!!!!! (cf. sujet)

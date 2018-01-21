@@ -15,6 +15,8 @@ void initialiserFenetre(void){
     //
     MLV_actualise_window();
 
+    
+
     //
     // Attend 10 secondes avant la fin du programme.
     //
@@ -96,6 +98,16 @@ void affichePlateau(Monde *monde){
     }
     //Affiche les cases
     MLV_Color background_color;
+    MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img;
+    guerrier_rouge_img = MLV_load_image( "img/guerrier_rouge.png" );
+    guerrier_bleu_img = MLV_load_image( "img/guerrier_bleu.png" );
+    serf_rouge_img = MLV_load_image("img/serf_rouge.png");
+    serf_bleu_img = MLV_load_image("img/serf_bleu.png");
+    MLV_resize_image_with_proportions( guerrier_rouge_img, COTECASE, COTECASE);
+    MLV_resize_image_with_proportions( guerrier_bleu_img, COTECASE, COTECASE);
+    MLV_resize_image_with_proportions( serf_rouge_img, COTECASE, COTECASE);
+    MLV_resize_image_with_proportions( serf_bleu_img, COTECASE, COTECASE);
+
     for (i = 0; i < LONG; i++){
 
         //Affiche les ordonnées
@@ -113,18 +125,34 @@ void affichePlateau(Monde *monde){
         );
         
         for (j=0; j<LARG; j++){
-            if (monde->plateau[i][j]) {
-                if (monde->plateau[i][j]->couleur == BLEU) {
-                    background_color = MLV_COLOR_SKYBLUE3;
-                } else if (monde->plateau[i][j]->couleur == ROUGE) {
-                    background_color = MLV_rgba(240,70,70,255);
-                }
-            } else {
-                background_color = MLV_COLOR_GREY;
-            }
-
+            // if (monde->plateau[i][j]) {
+            //     if (monde->plateau[i][j]->couleur == BLEU) {
+            //         background_color = MLV_COLOR_SKYBLUE3;
+            //     } else if (monde->plateau[i][j]->couleur == ROUGE) {
+            //         background_color = MLV_rgba(240,70,70,255);
+            //     }
+            // } else {
+                background_color = MLV_COLOR_WHITE;
+            // }
+            
             MLV_draw_filled_rectangle(j*COTECASE + 40, i*COTECASE + 40, COTECASE, COTECASE, background_color);
             MLV_draw_rectangle(j*COTECASE + 40, i*COTECASE + 40, COTECASE, COTECASE, MLV_COLOR_BLACK);
+            if (monde->plateau[i][j]) {
+                if (monde->plateau[i][j]->genre == GUERRIER) {
+                    if (monde->plateau[i][j]->couleur == BLEU) {
+                        MLV_draw_image( guerrier_bleu_img, j*COTECASE + 40, i*COTECASE + 40 );
+                    } else if (monde->plateau[i][j]->couleur == ROUGE) {
+                        MLV_draw_image( guerrier_rouge_img, j*COTECASE + 40, i*COTECASE + 40 );
+                    }
+                } else if (monde->plateau[i][j]->genre == SERF) {
+                    if (monde->plateau[i][j]->couleur == BLEU) {
+                        MLV_draw_image( serf_bleu_img, j*COTECASE + 40, i*COTECASE + 40 );
+                    } else if (monde->plateau[i][j]->couleur == ROUGE) {
+                        MLV_draw_image( serf_rouge_img, j*COTECASE + 40, i*COTECASE + 40 );
+                    }
+
+                }
+            }
         }
     }
 
@@ -326,11 +354,19 @@ void gererDemiTour(char joueur, Monde *monde) {
             {
                 for (j = -1; j <= 1; ++j)
                 {
-                    if ((monde->plateau[actuel->posY + j][actuel->posX + i] == NULL) && (actuel->posY + j >= 0) && (actuel->posX + i >= 0) && (actuel->posY + j < LONG) && (actuel->posX + i < LARG))
-                    {
-                        MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_PALE_GREEN);
+                    if ((actuel->posY + j >= 0) && (actuel->posX + i >= 0) && (actuel->posY + j < LONG) && (actuel->posX + i < LARG)) {
+                        if ((i!=0) || (j!=0))
+                        {
+                            if (monde->plateau[actuel->posY + j][actuel->posX + i] == NULL) {
+                                MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_PALE_GREEN);
+                            } else if ((monde->plateau[actuel->posY + j][actuel->posX + i]->couleur == actuel->couleur)) {
+                                MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_rgba(50,255,50,50));
+                            } else {
+                                MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_rgba(255,50,50,50));
+                            }
+                        }
                         MLV_draw_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_BLACK);
-                    }
+                    } 
                 }
             }
             MLV_actualise_window();
