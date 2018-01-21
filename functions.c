@@ -328,7 +328,7 @@ void gererDemiTour(char joueur, Monde *monde) {
                 {
                     if (monde->plateau[actuel->posY + j][actuel->posX + i] == NULL)
                     {
-                        MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_LIGHT_SEA_GREEN);
+                        MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_PALE_GREEN);
                         MLV_draw_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_BLACK);
                     }
                 }
