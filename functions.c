@@ -5,6 +5,11 @@ int random_0_1(void){
     return (rand()&1);
 }
 
+int random_0_9(void){
+    srand(time(NULL));
+    return (rand()%9+1);
+}
+
 void initialiserFenetre(void){
     //
     // Créé et affiche la fenêtre
@@ -146,6 +151,13 @@ int creerUnite(char type, UListe * unite){
         exit(EXIT_FAILURE);
     }
     u->genre = type;
+    u->ptVie = 100;
+    if (type == GUERRIER){
+        u->ptAttaque = 50;
+    }
+    else {
+        u->ptAttaque = 25;
+    }
     u->suiv = NULL;
     *unite = u;
     return 1;
@@ -250,26 +262,45 @@ void enleverUnite(Unite *unite, Monde *monde) {
             free(tmp);
         }
     }
-    afficherListes(*monde);
 }
 
 /* Fonction qui retourne un paramètre indiquant le résultat du combat et qui prend en paramètre une unité, les coordonnées da l'attaque et qui qui gère le combat selon les règles du jeu (.cf sujet) */
 int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
-    Unite *attaquant = unite;
-    Unite *defenseur = monde->plateau[posY][posX];
-    if (attaquant->genre == defenseur->genre) {
-        printf("Le défenseur (%c%c) perd (Les deux sont du même type)\n", defenseur->genre, defenseur->couleur);
-        enleverUnite(defenseur, monde);
-        return 1;
-    } else if ((attaquant->genre == SERF) & (defenseur->genre == GUERRIER)) {
-        printf("L'attaquant (%c%c) perd (le défenseur est de meilleur type)\n", attaquant->genre, attaquant->couleur);
-        enleverUnite(attaquant, monde);
-        return 0;
-    } else if ((attaquant->genre == GUERRIER) & (defenseur->genre == SERF)) {
-        printf("Le défenseur (%c%c) perd (l'attaquant est de meilleur type)\n", defenseur->genre, defenseur->couleur);
-        enleverUnite(defenseur, monde);
-        return 1;
+    Unite *attaquant, *defenseur;
+    int degats;
+    attaquant = unite;
+    defenseur = monde->plateau[posY][posX];
+    degats = attaquant->ptAttaque;
+    printf("ptVieDef = %d\n",defenseur->ptVie );
+    if (random_0_1() == 0){
+        degats += random_0_9();
     }
+    else {
+        degats -= random_0_9();
+    }
+    if (defenseur->ptVie <= degats){
+        printf("Le défenseur (%c%c) meurt\n", defenseur->genre, defenseur->couleur);
+        enleverUnite(defenseur, monde);
+        return 1;
+    } else {
+        printf("Le défenseur (%c%c) perd %d points de vie\n", defenseur->genre, defenseur->couleur, degats);
+        defenseur->ptVie -= degats;
+        printf("ptVieDef = %d\n",defenseur->ptVie );
+        return 0;
+    }
+    // if (attaquant->genre == defenseur->genre) {
+    //     printf("Le défenseur (%c%c) perd (Les deux sont du même type)\n", defenseur->genre, defenseur->couleur);
+    //     enleverUnite(defenseur, monde);
+    //     return 1;
+    // } else if ((attaquant->genre == SERF) & (defenseur->genre == GUERRIER)) {
+    //     printf("L'attaquant (%c%c) perd (le défenseur est de meilleur type)\n", attaquant->genre, attaquant->couleur);
+    //     enleverUnite(attaquant, monde);
+    //     return 0;
+    // } else if ((attaquant->genre == GUERRIER) & (defenseur->genre == SERF)) {
+    //     printf("Le défenseur (%c%c) perd (l'attaquant est de meilleur type)\n", defenseur->genre, defenseur->couleur);
+    //     enleverUnite(defenseur, monde);
+    //     return 1;
+    // }
     return 0;
 }
 
@@ -299,10 +330,12 @@ int deplacerOuAttaquer(Unite *unite, Monde *monde, int destX, int destY) {
     } else {
         /*  Un ennemi a été rencontré */
         if (attaquer(unite, monde, destX, destY) == 1) {
-            printf("Victoire de l'attaquant\n");
+            printf("L'attaquant à éliminé le défenseur\n");
+            // printf("Victoire de l'attaquant\n");
             return 2;
         } else {
-            printf("Défaite de l'attaquant\n");
+            printf("L'attaquant à infligé des dégats au défenseur\n");
+            // printf("Défaite de l'attaquant\n");
             return 3;
         }
     }
