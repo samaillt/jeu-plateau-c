@@ -155,9 +155,13 @@ int creerUnite(char type, UListe * unite){
     if (type == GUERRIER){
         u->ptAttaque = 50;
     }
-    else {
+    else if (type == SERF){
         u->ptAttaque = 25;
     }
+    else {
+        u->ptAttaque = 100;
+    }
+    u->action = 0;
     u->suiv = NULL;
     *unite = u;
     return 1;
@@ -304,39 +308,80 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
     return 0;
 }
 
-/* Fonction qui retourne un entier en paramètre pour la gestion d'erreur et au resultat et qui prend en paramètre une unité, les coordonnées de l'action et le monde et qui qui gère le déplacements et le combat */
-int deplacerOuAttaquer(Unite *unite, Monde *monde, int destX, int destY) {
-    /* Si les coordonnées sont invalides, la fonction retourne -1 */
-    if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
-        return -1;
-    }
-    /* Si la case marquée par les coordonnées n'est pas voisine à celle où l’unité en question se trouve, la fonction retourne -2 */
-    if (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 ) {
-        return -2;
-    }
-    /* Si la case marquée par les coordonnées est déjà occupée par une unité alliée, la fonction retourne -3 */
-    if (monde->plateau[destY][destX]) {
-        if (monde->plateau[destY][destX]->couleur == unite->couleur) {
-            return -3;
+/* Fonction qui remplace deplacerOuAttaquer et retourne un entier en paramètre pour la gestion d'erreur et au resultat et qui prend en paramètre une unité, les coordonnées de l'action et le monde et qui qui gère le déplacements et le combat */
+int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
+    if (unite->genre == REINE){
+        /* Si les coordonnées sont invalides, la fonction retourne -1 */
+        if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
+            return -1;
+        }    
+        /* Si la case marquée par les coordonnées n'est pas voisine à celle où l’unité en question se trouve, la fonction retourne -2 */
+        if (unite->genre == SERF && (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 )) {
+            return -2;
+        }
+        /* Si la case marquée par les coordonnées est déjà occupée par une unité alliée, la fonction retourne -3 */
+        if (monde->plateau[destY][destX]) {
+            if (monde->plateau[destY][destX]->couleur == unite->couleur && monde->plateau[destY][destX] != unite) {
+                return -3;
+            }
+        }
+        if (monde->plateau[destY][destX] == unite){
+            printf("La reine peut produire une unité\n");
+            return 1;
+        }
+        /*  Si la case destination est vide et adjacente, erreur car la reine ne peut pas se déplacer donc erreur d'invalidité.
+            Si la case de destination est valide, adjacente, et occupée par un ennemi, un combat prend lieu. 
+            La fonction retourne 2 si l'attaquant a gagné ou 3 s'il a seulement infligé des dégats */
+        if (monde->plateau[destY][destX] == NULL) {
+            printf("La reine de peut pas se déplacer\n");
+            return -1;
+        } else {
+            /*  Un ennemi a été rencontré */
+            if (attaquer(unite, monde, destX, destY) == 1) {
+                printf("La reine à éliminée le défenseur\n");
+                return 2;
+            } else {
+                printf("La reine à infligée des dégats au défenseur\n");
+                return 3;
+            }
         }
     }
-    /*  Si la case destination est vide, valide et adjacente, l’unité se déplace.
-        Si la case de destination est valide, adjacente, et occupée par un ennemi, un combat prend lieu. 
-        La fonction retourne 2 si l'attaquant a gagné ou 3 s'il a perdu */
-    if (monde->plateau[destY][destX] == NULL) {
-        deplacerUnite(unite, monde, destX, destY);
-        printf("L'unité s'est deplacée\n");
-        return 1;
-    } else {
-        /*  Un ennemi a été rencontré */
-        if (attaquer(unite, monde, destX, destY) == 1) {
-            printf("L'attaquant à éliminé le défenseur\n");
-            // printf("Victoire de l'attaquant\n");
-            return 2;
+    else {
+        /* Si les coordonnées sont invalides, la fonction retourne -1 */
+        if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
+            return -1;
+        }    
+        /* Si la case marquée par les coordonnées n'est pas voisine à celle où l’unité en question se trouve si l'unité est un serf ou, si c'est un guerrier, si ell est à plus de deux cases de ce dernier, la fonction retourne -2 */
+        if (unite->genre == GUERRIER && (destX > unite->posX + 2 || destX < unite->posX - 2 || destY > unite->posY + 2 || destY < unite->posY - 2 )){
+            return -2;
+        }
+        if (unite->genre == SERF && (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 )) {
+            return -2;
+        }
+        /* Si la case marquée par les coordonnées est déjà occupée par une unité alliée, la fonction retourne -3 */
+        if (monde->plateau[destY][destX]) {
+            if (monde->plateau[destY][destX]->couleur == unite->couleur) {
+                return -3;
+            }
+        }
+        /*  Si la case destination est vide, valide et adjacente, l’unité se déplace.
+            Si la case de destination est valide, adjacente, et occupée par un ennemi, un combat prend lieu. 
+            La fonction retourne 2 si l'attaquant a gagné ou 3 s'il a seulement infligé des dégats */
+        if (monde->plateau[destY][destX] == NULL) {
+            deplacerUnite(unite, monde, destX, destY);
+            printf("L'unité s'est deplacée\n");
+            return 1;
         } else {
-            printf("L'attaquant à infligé des dégats au défenseur\n");
-            // printf("Défaite de l'attaquant\n");
-            return 3;
+            /*  Un ennemi a été rencontré */
+            if (attaquer(unite, monde, destX, destY) == 1) {
+                printf("L'attaquant à éliminé le défenseur\n");
+                // printf("Victoire de l'attaquant\n");
+                return 2;
+            } else {
+                printf("L'attaquant à infligé des dégats au défenseur\n");
+                // printf("Défaite de l'attaquant\n");
+                return 3;
+            }
         }
     }
 }
@@ -344,10 +389,10 @@ int deplacerOuAttaquer(Unite *unite, Monde *monde, int destX, int destY) {
 /* Fonction qui ne retourne rien et prend en paramètre le joueur et le monde et qui gère toutes les actions d’un joueur pendant son tour */
 void gererDemiTour(char joueur, Monde *monde) {
     /* Parcourir les unités du joueur */
-    int choix, x, y, i, j;
+    int choix, x, y, i, j, uniteEnAttente;
+    uniteEnAttente = 1;
     char finDeTour;
     UListe liste;
-    
     if (joueur == 'B') {
         liste = monde->bleu;
     } else if (joueur == 'R') {
@@ -356,36 +401,64 @@ void gererDemiTour(char joueur, Monde *monde) {
     if(liste != NULL){
         printf("C'est le tour N°%d du joueur %c.\n", monde->tour, joueur);
         affichePlateau(monde);
-        Unite *actuel = liste;
-        while(actuel != NULL) {
-            printf("Unité actuelle : %c%c, (%d, %d)\n", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
-            printf("Que souhaitez-vous faire ? (1 : Déplacer/Attaquer, 2 : Ne rien faire)\n");
-            for (i = -1; i <= 1; ++i)
-            {
-                for (j = -1; j <= 1; ++j)
+        Unite *actuel, *tmp;
+        actuel = liste;
+        while(actuel != NULL && uniteEnAttente == 1) {
+            if (actuel->action == 0){
+                printf("Unité actuelle : %c%c, (%d, %d)\n", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
+                printf("Que souhaitez-vous faire ? (1 : Effectuer une (ou plusieurs) action(s) avec l'Unité, 2 : Mettre l'unité en attente, 3 : Ne rien faire)\n");
+                for (i = -1; i <= 1; ++i)
                 {
-                    if ((monde->plateau[actuel->posY + j][actuel->posX + i] == NULL) && (actuel->posY + j >= 0) && (actuel->posX + i >= 0) && (actuel->posY + j < LONG) && (actuel->posX + i < LARG))
+                    for (j = -1; j <= 1; ++j)
                     {
-                        MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_PALE_GREEN);
-                        MLV_draw_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_BLACK);
+                        if ((monde->plateau[actuel->posY + j][actuel->posX + i] == NULL) && (actuel->posY + j >= 0) && (actuel->posX + i >= 0) && (actuel->posY + j < LONG) && (actuel->posX + i < LARG))
+                        {
+                            MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_PALE_GREEN);
+                            MLV_draw_rectangle((actuel->posX*COTECASE) + (i*COTECASE + 40), (actuel->posY*COTECASE) + (j*COTECASE + 40), COTECASE, COTECASE, MLV_COLOR_BLACK);
+                        }
                     }
                 }
-            }
-            MLV_actualise_window();
-            scanf(" %d", &choix);
-            if (choix == 1) {
-                printf("L'utilisateur souhaite se déplacer ou attaquer.\n");
-                printf("Veuillez entrer les coordonnées x et y:\n");
-                scanf(" %d %d", &x, &y);
-                if (deplacerOuAttaquer(actuel, monde, x, y) < 0){
-                    printf("Ordre non valide, on passe à l'unité suivante\n");
+                MLV_actualise_window();
+                scanf(" %d", &choix);
+                if (choix == 1) {
+                    printf("L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\n");
+                    if (actuel->genre == REINE){
+                        printf("L'unité actuelle étant une reine, veuillez entrer les coordonnées de sa case pour lancer la production d'unité ou les coordonnées d'une unité à attaquer (Portée : 1) (ATTENTION, la reine ne peut pas se déplacer !)\n");
+                    } else{
+                        printf("Veuillez entre les coordonnées de déplacement de l'unité ou de l'ennemi à attaquer\n");
+                    }
+                    printf("Veuillez entrer les coordonnées x et y:\n");
+                    scanf(" %d %d", &x, &y);
+                    if (actionUnite(actuel, monde, x, y) < 0){
+                        printf("Ordre non valide, on passe à l'unité suivante\n");
+                    }
+                    actuel->action=1;
+                    actuel = actuel->suiv;
+                } else if (choix == 2) {
+                    printf("L'utilisateur souhaite mettre l'unité en attente, on passe à l'unité suivante.\n");
+                    actuel = actuel->suiv;
                 }
-                actuel = actuel->suiv;
-            } else if (choix == 2) {
-                printf("L'utilisateur ne veux rien faire, on passe à l'unité suivante.\n");
+                else {
+                    printf("L'utilisateur souhaite ne rien faire avec cette unité, on passe à l'unité suivante.\n");
+                    actuel->action = 1;
+                    actuel = actuel->suiv;
+                }
+                affichePlateau(monde);
+            }
+            else {
                 actuel = actuel->suiv;
             }
-            affichePlateau(monde);
+            tmp = liste;
+            uniteEnAttente = 0;
+            while (tmp != NULL){
+                if (tmp->action == 0){
+                    uniteEnAttente = 1;
+                } 
+                tmp = tmp->suiv;
+            }
+            if (actuel == NULL && uniteEnAttente == 1){
+                actuel = liste;
+            }
         }
         do {
             printf("Veuillez indiquer la fin du tour (f)\n");
@@ -436,7 +509,7 @@ void gererPartie(void){
     Monde monde; /* Déclaration du monde */
     int arreterPartie;
     arreterPartie = 0;
-    Unite *u1, *u2, *u3, *u4, *u5, *u6; /* Déclaration des unités */
+    Unite *u1, *u2, *u3, *u4, *u5, *u6, *u7, *u8; /* Déclaration des unités */
     //Unite *u1, *u4; /* Déclaration des unités */
     initialiserMonde(&monde); /* Initialisaton du monde */
     
@@ -444,17 +517,21 @@ void gererPartie(void){
     creerUnite(GUERRIER, &u1);
     creerUnite(SERF, &u2);
     creerUnite(SERF, &u3);
+    creerUnite(REINE, &u4);
     positionnerUnite(u1, &monde, BLEU);
     positionnerUnite(u2, &monde, BLEU);
     positionnerUnite(u3, &monde, BLEU);
+    positionnerUnite(u4, &monde, BLEU);
     
     /* Création et placement des unités rouges */
-    creerUnite(GUERRIER, &u4);
-    creerUnite(SERF, &u5);
+    creerUnite(GUERRIER, &u5);
     creerUnite(SERF, &u6);
-    positionnerUnite(u4, &monde, ROUGE);
+    creerUnite(SERF, &u7);
+    creerUnite(REINE, &u8);
     positionnerUnite(u5, &monde, ROUGE);
     positionnerUnite(u6, &monde, ROUGE);
+    positionnerUnite(u7, &monde, ROUGE);
+    positionnerUnite(u8, &monde, ROUGE);
     do {
         gererTour(&monde);
         if (monde.rouge == NULL || monde.bleu == NULL) {
