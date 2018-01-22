@@ -17,8 +17,14 @@
 #define SERF 's'
 #define GUERRIER 'g'
 
+int random_0_1(void){
+	srand(time(NULL));
+	return (rand()&1);
+}
+
 /*Fonction principale qui lance une partie*/
 int main() {
-	
+    int alea=random_0_1();    //entre 1-9
+    printf("%d\n",alea);    //teste affichage
     return 0;
 }
