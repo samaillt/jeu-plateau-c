@@ -23,11 +23,14 @@
 /* Dimension du côté d'une case pour l'affichage graphique */
 #define COTECASE 45
 
+#define WINDOW_WIDTH (LARG+1+5)*COTECASE
+#define WINDOW_HEIGHT (LARG+1+5)*COTECASE
+
 /* Cette constante correspond à l'espace en haut et à gauche du plateau */
 #define ESPACE 40
 
 /* Constante pour définir le nombre de caractères maximum du message */
-#define MESSAGE_MAX_SIZE 200
+#define MESSAGE_MAX_SIZE 1000
 
 /*STRUCTURES */
 typedef struct unite{
@@ -71,5 +74,6 @@ void afficherListes(Monde monde);
 
 /* MLV Functions */
 void ecrireMessage(char message[]);
+void effacerBoutons(void);
 
 #endif

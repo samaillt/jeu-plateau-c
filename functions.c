@@ -13,12 +13,10 @@ int random_0_9(void){
 void initialiserFenetre(void){
     
     /* Créé et affiche la fenêtre */
-    int window_width = (LARG+1+5)*COTECASE;
-    int window_height = (LARG+1+5)*COTECASE;
-    MLV_create_window( "Jeu de plateau", "hello world", window_width, window_height );
+    MLV_create_window( "Jeu de plateau", "hello world", WINDOW_WIDTH, WINDOW_HEIGHT );
 
     /* Affiche un fond gris */
-    MLV_draw_filled_rectangle(0, 0, window_width, window_height, MLV_rgba(18, 18, 18, 255));
+    MLV_draw_filled_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, MLV_rgba(18, 18, 18, 255));
 
     /* Met a jour l'affichage de la fenêtre. */
     MLV_actualise_window();
@@ -238,12 +236,6 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
             }
         } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
 
-
-        if (posX < 0 || posX > 17 || posY < 0 || posY > 11) {
-            printf("Coordonnées invalides\nRecommencez svp\n");
-        } else if (monde->plateau[posY][posX]) {
-            printf("Case déjà occupée\nRecommencez svp\n");
-        }
     } while ((posX < 0 || posX > 17 || posY < 0 || posY > 11) || (monde->plateau[posY][posX]));
     placerAuMonde(unite, monde, posX, posY, couleur);
     printf("L'unité %c%c à été placée en (%d, %d)\n", unite->genre, couleur, posX, posY);
@@ -336,7 +328,7 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
     defenseur = monde->plateau[posY][posX];
     degats = attaquant->ptAttaque;
     char message[MESSAGE_MAX_SIZE];
-    sprintf(message, "ptVieDef = %d\n", defenseur->ptVie);
+    sprintf(message, "Points de vie du défenseur = %d", defenseur->ptVie);
     ecrireMessage(message);
     MLV_wait_seconds(1);
 
@@ -347,13 +339,13 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
         degats -= random_0_9();
     }
     if (defenseur->ptVie <= degats){
-        sprintf(message, "Le défenseur (%c%c) meurt\n", defenseur->genre, defenseur->couleur);
+        sprintf(message, "Le défenseur (%c%c) meurt", defenseur->genre, defenseur->couleur);
         ecrireMessage(message);
         MLV_wait_seconds(1);
         enleverUnite(defenseur, monde);
         return 1;
     } else {
-        sprintf(message, "Le défenseur (%c%c) perd %d points de vie\n", defenseur->genre, defenseur->couleur, degats);
+        sprintf(message, "Le défenseur (%c%c) perd %d points de vie", defenseur->genre, defenseur->couleur, degats);
         ecrireMessage(message);
         MLV_wait_seconds(1);
         defenseur->ptVie -= degats;
@@ -367,6 +359,7 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
 
 /* Fonction qui remplace deplacerOuAttaquer et retourne un entier en paramètre pour la gestion d'erreur et au resultat et qui prend en paramètre une unité, les coordonnées de l'action et le monde et qui qui gère le déplacements et le combat */
 int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
+    char message[MESSAGE_MAX_SIZE];
     if (unite->genre == REINE){
         /* Si les coordonnées sont invalides, la fonction retourne -1 */
         if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
@@ -383,22 +376,30 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             }
         }
         if (monde->plateau[destY][destX] == unite){
-            printf("La reine peut produire une unité\n");
+            sprintf(message, "La reine peut produire une unité");
+            ecrireMessage(message);
+            MLV_wait_milliseconds(1500);
             return 1;
         }
         /*  Si la case destination est vide et adjacente, erreur car la reine ne peut pas se déplacer donc erreur d'invalidité.
             Si la case de destination est valide, adjacente, et occupée par un ennemi, un combat prend lieu. 
             La fonction retourne 2 si l'attaquant a gagné ou 3 s'il a seulement infligé des dégats */
         if (monde->plateau[destY][destX] == NULL) {
-            printf("La reine de peut pas se déplacer\n");
+            sprintf(message, "La reine ne peut pas se déplacer");
+            ecrireMessage(message);
+            MLV_wait_milliseconds(1500);
             return -1;
         } else {
             /*  Un ennemi a été rencontré */
             if (attaquer(unite, monde, destX, destY) == 1) {
-                printf("La reine à éliminée le défenseur\n");
+                sprintf(message, "La reine à éliminée le défenseur\n");
+                ecrireMessage(message);
+                MLV_wait_milliseconds(1500);
                 return 2;
             } else {
-                printf("La reine à infligée des dégats au défenseur\n");
+                sprintf(message, "La reine à infligée des dégats au défenseur\n");
+                ecrireMessage(message);
+                MLV_wait_milliseconds(1500);
                 return 3;
             }
         }
@@ -466,7 +467,7 @@ void gererDemiTour(char joueur, Monde *monde) {
         while(actuel != NULL && uniteEnAttente == 1) {
             if (actuel->action == 0){
                 printf("Unité actuelle : %c%c, (%d, %d)\n", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
-                sprintf(message, "Unité actuelle : %c%c, (%d, %d)\nQue souhaitez-vous faire ?\n - Effectuer une (ou plusieurs) action(s) avec l'Unité\n - Mettre l'unité en attente\n - Ne rien faire", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
+                sprintf(message, "Unité actuelle : %c%c, (%d, %d)\nQue souhaitez-vous faire ?\n - Effectuer une (ou plusieurs) action(s) avec l'unité\n - Mettre l'unité en attente\n - Ne rien faire", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
                 ecrireMessage(message);
 
                 /* Affichage des carrés de couleur autour de l'unité actuelle : VERT pour les alliés et les cases disponibles, ROUGE pour les ennemis */
@@ -497,7 +498,7 @@ void gererDemiTour(char joueur, Monde *monde) {
                 MLV_draw_text_box(
                     ESPACE + (LARG+.5)*COTECASE, ESPACE, 
                     170, COTECASE,
-                    "Se déplacer / Attaquer",
+                    "Effectuer une action",
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
                     MLV_TEXT_CENTER,
@@ -506,6 +507,15 @@ void gererDemiTour(char joueur, Monde *monde) {
                 MLV_draw_text_box(
                     ESPACE + (LARG+.5)*COTECASE, ESPACE + COTECASE + COTECASE/2, 
                     170, COTECASE,
+                    "Mettre en attente",
+                    10,
+                    MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
+                    MLV_TEXT_CENTER,
+                    MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+                );
+                MLV_draw_text_box(
+                    ESPACE + (LARG+.5)*COTECASE, ESPACE + 3 * COTECASE, 
+                    170, COTECASE,
                     "Ne rien faire",
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -513,29 +523,32 @@ void gererDemiTour(char joueur, Monde *monde) {
                     MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
                 );
                 MLV_actualise_window();
-
-                // scanf(" %d", &choix);
                 
                 choix = 0;
                 while (choix == 0) {
                     MLV_wait_mouse( &mouseX, &mouseY );
                     if ((mouseX > ESPACE + (LARG+0.5)*COTECASE) && (mouseX < (ESPACE + (LARG+0.5)*COTECASE) + 170)) {
-                        /* Bouton "Se déplacer / Attaquer" */
+                        /* Bouton "Effectuer une action" */
                         if ((mouseY > ESPACE) && (mouseY < ESPACE + COTECASE)) {
                             choix = 1;
                         }
-                        /* Bouton "Ne rien faire" */
+                        /* Bouton "Mettre en attente" */
                         else if ((mouseY > ESPACE + COTECASE + COTECASE/2) && (mouseY < (ESPACE + COTECASE + COTECASE/2) + COTECASE)) {
                             choix = 2;
+                        }
+                        /* Bouton "Ne rien faire" */
+                        else if ((mouseY > ESPACE + 3 * COTECASE) && (mouseY < (ESPACE + 3 * COTECASE) + COTECASE)) {
+                            choix = 3;
                         }
                     }
                 }
 
                 if (choix == 1) {
+                    printf("aaaUnite genre : %c\n", actuel->genre);
                     if (actuel->genre == REINE){
-                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\nL'unité actuelle étant une reine, veuillez entrer les coordonnées de sa case pour lancer la production\nd'unité ou les coordonnées d'une unité à attaquer (Portée : 1) (ATTENTION, la reine ne peut pas se déplacer !)");
-                    } else{
-                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\nVeuillez cliquer sur la case cible.\n");
+                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec la Reine.\nL'unité actuelle étant une reine, veuillez cliquer sur elle pour lancer la production d'unité\nou cliquez sur une unité à attaquer (Portée : 1) (ATTENTION, la reine ne peut pas se déplacer !)");
+                    } else {
+                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\nVeuillez cliquer sur la case cible.");
                     }
                     ecrireMessage(message);
                     MLV_draw_filled_rectangle(ESPACE + (LARG+.5)*COTECASE, ESPACE, 300, 500, MLV_rgba(18,18,18,255));
@@ -548,8 +561,7 @@ void gererDemiTour(char joueur, Monde *monde) {
                             y = (mouseY-ESPACE)/COTECASE;
                         }
                     } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
-
-                    // scanf(" %d %d", &x, &y);
+                    
                     if (actionUnite(actuel, monde, x, y) < 0){
                         printf("Ordre non valide, on passe à l'unité suivante\n");
                     }
@@ -558,14 +570,13 @@ void gererDemiTour(char joueur, Monde *monde) {
                 } else if (choix == 2) {
                     printf("L'utilisateur souhaite mettre l'unité en attente, on passe à l'unité suivante.\n");
                     actuel = actuel->suiv;
-                } else {
+                } else if (choix == 3) {
                     printf("L'utilisateur souhaite ne rien faire avec cette unité, on passe à l'unité suivante.\n");
                     actuel->action = 1;
                     actuel = actuel->suiv;
                 }
                 affichePlateau(monde);
-            }
-            else {
+            } else {
                 actuel = actuel->suiv;
             }
             tmp = liste;
@@ -606,8 +617,17 @@ void gererDemiTour(char joueur, Monde *monde) {
             }
         }
 
+        effacerBoutons();
         sprintf(message, "Le tour du joueur %c est terminé.", joueur);
         ecrireMessage(message);
+        MLV_wait_seconds(1);
+
+        /* remet le compteur d'actions effectuées à 0 */
+        tmp = liste;
+        while (tmp != NULL){
+            tmp->action = 0;
+            tmp = tmp->suiv;
+        }
     }
 }
 
@@ -758,7 +778,7 @@ void afficherListes(Monde monde){
 }
 
 void ecrireMessage(char message[]){
-    MLV_draw_filled_rectangle(45, LONG*COTECASE + ESPACE + 40, 500, 100, MLV_rgba(18,18,18,255));
+    MLV_draw_filled_rectangle(45, LONG*COTECASE + ESPACE + 40, WINDOW_WIDTH, WINDOW_HEIGHT, MLV_rgba(18,18,18,255));
     MLV_draw_adapted_text_box(
         45, LONG*COTECASE + ESPACE + 40,
         message,
@@ -767,5 +787,10 @@ void ecrireMessage(char message[]){
         MLV_TEXT_LEFT
     );
 
+    MLV_actualise_window();
+}
+
+void effacerBoutons(){
+    MLV_draw_filled_rectangle(ESPACE + (LARG+.5)*COTECASE, ESPACE, 300, 500, MLV_rgba(18,18,18,255));
     MLV_actualise_window();
 }
