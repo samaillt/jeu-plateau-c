@@ -122,6 +122,13 @@ void affichePlateau(Monde *monde){
     }
     afficherUnites(*monde);
     MLV_actualise_window();
+
+    MLV_free_image( guerrier_rouge_img );
+    MLV_free_image( serf_rouge_img );
+    MLV_free_image( reine_rouge_img );
+    MLV_free_image( guerrier_bleu_img );
+    MLV_free_image( serf_bleu_img );
+    MLV_free_image( reine_bleu_img );
 }
 
 /* Fonction qui retourne un entier servant à la gestion d'erreur et prend en paramètre un type et une liste d'unité et alloue une nouvelle unite de type type, et stocke son adresse dans *unite */
@@ -256,6 +263,13 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
 
     } while ((posX < 0 || posX > 17 || posY < 0 || posY > 11) || (monde->plateau[posY][posX]));
     placerAuMonde(unite, monde, posX, posY, couleur);
+
+    MLV_free_image( guerrier_rouge_img );
+    MLV_free_image( serf_rouge_img );
+    MLV_free_image( reine_rouge_img );
+    MLV_free_image( guerrier_bleu_img );
+    MLV_free_image( serf_bleu_img );
+    MLV_free_image( reine_bleu_img );
 }
 
 /* Fonction qui retourne un entier permettant la gestion d'erreur et prend en paramètre une unité, les coordonnées auxquelles la placer, sa couleur et le monde. Elle place une unité qui vient d’être créée à la position souhaitée dans le monde sous le contrôle de son nouveau maître */
@@ -956,4 +970,7 @@ void afficherUnites(Monde monde){
     MLV_free_image( guerrier_rouge_img );
     MLV_free_image( serf_rouge_img );
     MLV_free_image( reine_rouge_img );
+    MLV_free_image( guerrier_bleu_img );
+    MLV_free_image( serf_bleu_img );
+    MLV_free_image( reine_bleu_img );
 }
