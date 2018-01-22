@@ -9,9 +9,12 @@
 
 ### Implémenter une interface graphique avec MLV :
 - [x] Ajouter des images pour les différentes unités
-- [ ] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso
-- [ ] Cliquer sur les cases pour se positionner, se déplacer, attaquer.
-- [ ] Afficher tous les textes dans le carré correspondant
+- [ ] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso ?
+- [x] Cliquer sur les cases pour se positionner.
+- [x] Cliquer sur les cases pour se déplacer et attaquer.
+- [x] Fin du tour : Bouton Continuer / Arrêter.
+- [x] Changer la couleur des cases lorsqu'on passe la souris dessus.
+- [ ] Afficher tous les textes dans le carré d'affichage
 
 
 

@@ -3,6 +3,7 @@
 /* Fonction principale qui lance une partie */
 int main() {
 	initialiserFenetre();
-    gererPartie();
+	gererPartie();
+
     return 0;
 }

@@ -10,9 +10,6 @@
 /* dimension du monde en nombre de cases */
 #define LONG 12
 #define LARG 18
-
-/* dimension du côté d'une case pour l'affichage graphique */
-#define COTECASE 45
 /* l'origine est en haut a gauche */
 
 #define ROUGE 'R' /*identifiant du premier joueur */
@@ -21,6 +18,15 @@
 /* les genres d'unites */
 #define SERF 's'
 #define GUERRIER 'g'
+
+/* Dimension du côté d'une case pour l'affichage graphique */
+#define COTECASE 45
+
+/* Cette constante correspond à l'espace en haut et à gauche du plateau */
+#define ESPACE 40
+
+/* Constante pour définir le nombre de caractères maximum du message */
+#define MESSAGE_MAX_SIZE 200
 
 /*STRUCTURES */
 typedef struct unite{
