@@ -21,12 +21,17 @@
 /* les genres d'unites */
 #define SERF 's'
 #define GUERRIER 'g'
+#define REINE 'r'
 
 /*STRUCTURES */
 typedef struct unite{
     int posX, posY; /* Pour stocker les coordonnées de l'unité */
     char couleur; /* ROUGE ou BLEU */
-    char genre; /* GUERRIER ou SERF */
+    char genre; /* GUERRIER ou SERF (ou REINE) */
+    int ptVie; /* Nombre de vie de l'unité */
+    int ptAttaque; /* Points d'attaque de l'unité */
+    int action; /* Entier qui vaudra 1 si l'unité peut effectuer une action ou 0 sinon */
+    int cpt; /* Compteur utilisable pour la reine qui produit des unités */
     struct unite *suiv; /* liste des unités suivantes */
 } Unite;
 
@@ -40,6 +45,8 @@ typedef struct monde{
 
 
 /* PROTOTYPES DES FONCTIONS */
+int random_0_1(void);
+int random_0_9(void);
 void initialiserFenetre(void);
 void initialiserMonde(Monde *monde);
 void affichePlateau(Monde *monde);
@@ -49,7 +56,7 @@ int placerAuMonde(Unite *unite, Monde *monde, int posX, int posY, char couleur);
 void deplacerUnite(Unite *unite, Monde *monde, int destX, int destY);
 void enleverUnite(Unite *unite, Monde *monde);
 int attaquer(Unite *unite, Monde *monde, int posX, int posY);
-int deplacerOuAttaquer(Unite *unite, Monde *monde, int destX, int destY);
+int actionUnite(Unite *unite, Monde *monde, int destX, int destY);
 void gererDemiTour(char joueur, Monde *monde);
 void gererTour(Monde *monde);
 void viderMonde(Monde *monde);
