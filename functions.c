@@ -44,7 +44,7 @@ void affichePlateau(Monde *monde){
     int spaceX, spaceY;
     char indexX[2], indexY[2];
     MLV_Color background_color;
-    MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img;
+    MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img, *reine_rouge_img, *reine_bleu_img;
 
     // Affiche Les abscisses à l'écran 
     for (k = 0; k < LARG; k++) {
@@ -67,10 +67,14 @@ void affichePlateau(Monde *monde){
     guerrier_bleu_img = MLV_load_image( "img/guerrier_bleu.png" );
     serf_rouge_img = MLV_load_image("img/serf_rouge.png");
     serf_bleu_img = MLV_load_image("img/serf_bleu.png");
+    reine_rouge_img = MLV_load_image("img/reine_rouge.png");
+    reine_bleu_img = MLV_load_image("img/reine_bleu.png");
     MLV_resize_image_with_proportions( guerrier_rouge_img, COTECASE, COTECASE );
     MLV_resize_image_with_proportions( guerrier_bleu_img, COTECASE, COTECASE );
     MLV_resize_image_with_proportions( serf_rouge_img, COTECASE, COTECASE );
     MLV_resize_image_with_proportions( serf_bleu_img, COTECASE, COTECASE );
+    MLV_resize_image_with_proportions( reine_rouge_img, COTECASE, COTECASE );
+    MLV_resize_image_with_proportions( reine_bleu_img, COTECASE, COTECASE );
 
     //Affiche les cases
     for (i = 0; i < LONG; i++){
@@ -108,7 +112,12 @@ void affichePlateau(Monde *monde){
                     } else if (monde->plateau[i][j]->couleur == ROUGE) {
                         MLV_draw_image( serf_rouge_img, j*COTECASE + ESPACE, i*COTECASE + ESPACE );
                     }
-
+                } else if (monde->plateau[i][j]->genre == REINE) {
+                    if (monde->plateau[i][j]->couleur == BLEU) {
+                        MLV_draw_image( reine_bleu_img, j*COTECASE + ESPACE, i*COTECASE + ESPACE );
+                    } else if (monde->plateau[i][j]->couleur == ROUGE) {
+                        MLV_draw_image( reine_rouge_img, j*COTECASE + ESPACE, i*COTECASE + ESPACE );
+                    }
                 }
             }
         }
@@ -145,7 +154,7 @@ int creerUnite(char type, UListe * unite){
 /* Fonction qui ne retourne rien et prend en parametre une unite, sa couleur et le monde et qui permet à l'utilisateur d'entrer ses coordonnées en début de partie */
 void positionnerUnite(Unite *unite, Monde *monde, char couleur){
     int posX, posY, mouseX, mouseY, x, y, i, j;
-    MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img;
+    MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img, *reine_rouge_img, *reine_bleu_img;
     MLV_Event event;
     char message[200];
 
@@ -154,10 +163,14 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
     guerrier_bleu_img = MLV_load_image( "img/guerrier_bleu.png" );
     serf_rouge_img = MLV_load_image("img/serf_rouge.png");
     serf_bleu_img = MLV_load_image("img/serf_bleu.png");
-    MLV_resize_image_with_proportions( guerrier_rouge_img, COTECASE, COTECASE);
-    MLV_resize_image_with_proportions( guerrier_bleu_img, COTECASE, COTECASE);
-    MLV_resize_image_with_proportions( serf_rouge_img, COTECASE, COTECASE);
-    MLV_resize_image_with_proportions( serf_bleu_img, COTECASE, COTECASE);
+    reine_rouge_img = MLV_load_image("img/reine_rouge.png");
+    reine_bleu_img = MLV_load_image("img/reine_bleu.png");
+    MLV_resize_image_with_proportions( guerrier_rouge_img, COTECASE, COTECASE );
+    MLV_resize_image_with_proportions( guerrier_bleu_img, COTECASE, COTECASE );
+    MLV_resize_image_with_proportions( serf_rouge_img, COTECASE, COTECASE );
+    MLV_resize_image_with_proportions( serf_bleu_img, COTECASE, COTECASE );
+    MLV_resize_image_with_proportions( reine_rouge_img, COTECASE, COTECASE );
+    MLV_resize_image_with_proportions( reine_bleu_img, COTECASE, COTECASE );
 
     affichePlateau(monde);
     do {
@@ -185,18 +198,21 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
                                 MLV_draw_rectangle(j*COTECASE + ESPACE -1, i*COTECASE + ESPACE-1, COTECASE+2, COTECASE+2, MLV_COLOR_BLACK);
                                 if (monde->plateau[((y-ESPACE)/COTECASE)][((x-ESPACE)/COTECASE)] == NULL) {
                                     if (couleur == BLEU) {
-                                        if (unite->genre == GUERRIER)
-                                        {
+                                        if (unite->genre == GUERRIER) {
                                             MLV_draw_image( guerrier_bleu_img, ((x-ESPACE)/COTECASE)*COTECASE + ESPACE, ((y-ESPACE)/COTECASE)*COTECASE + ESPACE );
-                                        } else {
+                                        } else if (unite->genre == SERF) {
                                             MLV_draw_image( serf_bleu_img, ((x-ESPACE)/COTECASE)*COTECASE + ESPACE, ((y-ESPACE)/COTECASE)*COTECASE + ESPACE );
+                                        } else if (unite->genre == REINE) {
+                                            MLV_draw_image( reine_bleu_img, ((x-ESPACE)/COTECASE)*COTECASE + ESPACE, ((y-ESPACE)/COTECASE)*COTECASE + ESPACE );
                                         }
                                     } else if (couleur == ROUGE) {
                                         if (unite->genre == GUERRIER)
                                         {
                                             MLV_draw_image( guerrier_rouge_img, ((x-ESPACE)/COTECASE)*COTECASE + ESPACE, ((y-ESPACE)/COTECASE)*COTECASE + ESPACE );
-                                        } else {
+                                        } else if (unite->genre == SERF) {
                                             MLV_draw_image( serf_rouge_img, ((x-ESPACE)/COTECASE)*COTECASE + ESPACE, ((y-ESPACE)/COTECASE)*COTECASE + ESPACE );
+                                        } else if (unite->genre == REINE) {
+                                            MLV_draw_image( reine_rouge_img, ((x-ESPACE)/COTECASE)*COTECASE + ESPACE, ((y-ESPACE)/COTECASE)*COTECASE + ESPACE );
                                         }
                                     }
                                     MLV_draw_filled_rectangle(((x-ESPACE)/COTECASE)*COTECASE + ESPACE, ((y-ESPACE)/COTECASE)*COTECASE + ESPACE, COTECASE, COTECASE, MLV_rgba(255,255,255,100));
@@ -450,7 +466,7 @@ void gererDemiTour(char joueur, Monde *monde) {
         while(actuel != NULL && uniteEnAttente == 1) {
             if (actuel->action == 0){
                 printf("Unité actuelle : %c%c, (%d, %d)\n", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
-                sprintf(message, "Unité actuelle : %c%c, (%d, %d)\nQue souhaitez-vous faire ?\n1 : Effectuer une (ou plusieurs) action(s) avec l'Unité\n2 : Mettre l'unité en attente\n3 : Ne rien faire)", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
+                sprintf(message, "Unité actuelle : %c%c, (%d, %d)\nQue souhaitez-vous faire ?\n - Effectuer une (ou plusieurs) action(s) avec l'Unité\n - Mettre l'unité en attente\n - Ne rien faire", actuel->genre, actuel->couleur, actuel->posX, actuel->posY);
                 ecrireMessage(message);
 
                 /* Affichage des carrés de couleur autour de l'unité actuelle : VERT pour les alliés et les cases disponibles, ROUGE pour les ennemis */
