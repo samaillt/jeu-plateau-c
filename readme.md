@@ -34,8 +34,10 @@ DONE
 - [x] Cliquer sur les cases pour se déplacer et attaquer.
 - [x] Fin du tour : Bouton Continuer / Arrêter.
 - [x] Changer la couleur des cases lorsqu'on passe la souris dessus.
-- [ ] Afficher tous les textes dans le carré d'affichage
-- [ ] Guerrier : 2 cases de portées autour
+- [x] Afficher tous les textes dans le carré d'affichage
+- [x] Guerrier : 2 cases de portées autour
+- [x] Afficher le compteur de tours
+- [x] Afficher les images dans la liste des unités
 
 
 
