@@ -35,6 +35,7 @@ DONE
 - [x] Fin du tour : Bouton Continuer / Arrêter.
 - [x] Changer la couleur des cases lorsqu'on passe la souris dessus.
 - [ ] Afficher tous les textes dans le carré d'affichage
+- [ ] Guerrier : 2 cases de portées autour
 
 
 

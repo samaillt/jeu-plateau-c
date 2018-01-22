@@ -238,7 +238,6 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
 
     } while ((posX < 0 || posX > 17 || posY < 0 || posY > 11) || (monde->plateau[posY][posX]));
     placerAuMonde(unite, monde, posX, posY, couleur);
-    printf("L'unité %c%c à été placée en (%d, %d)\n", unite->genre, couleur, posX, posY);
 }
 
 /* Fonction qui retourne un entier permettant la gestion d'erreur et prend en paramètre une unité, les coordonnées auxquelles la placer, sa couleur et le monde. Elle place une unité qui vient d’être créée à la position souhaitée dans le monde sous le contrôle de son nouveau maître */
@@ -329,8 +328,9 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
     degats = attaquant->ptAttaque;
     char message[MESSAGE_MAX_SIZE];
     sprintf(message, "Points de vie du défenseur = %d", defenseur->ptVie);
+    
     ecrireMessage(message);
-    MLV_wait_seconds(1);
+    MLV_wait_milliseconds(1500);
 
     if (random_0_1() == 0){
         degats += random_0_9();
@@ -341,17 +341,17 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
     if (defenseur->ptVie <= degats){
         sprintf(message, "Le défenseur (%c%c) meurt", defenseur->genre, defenseur->couleur);
         ecrireMessage(message);
-        MLV_wait_seconds(1);
+        MLV_wait_milliseconds(1500);
         enleverUnite(defenseur, monde);
         return 1;
     } else {
         sprintf(message, "Le défenseur (%c%c) perd %d points de vie", defenseur->genre, defenseur->couleur, degats);
         ecrireMessage(message);
-        MLV_wait_seconds(1);
+        MLV_wait_milliseconds(1500);
         defenseur->ptVie -= degats;
-        sprintf(message, "ptVieDef = %d\n",defenseur->ptVie );
+        sprintf(message, "Points de vie restant du défenseur = %d\n",defenseur->ptVie );
         ecrireMessage(message);
-        MLV_wait_seconds(1);
+        MLV_wait_milliseconds(1500);
         return 0;
     }
     return 0;
@@ -618,9 +618,13 @@ void gererDemiTour(char joueur, Monde *monde) {
         }
 
         effacerBoutons();
-        sprintf(message, "Le tour du joueur %c est terminé.", joueur);
+        if (joueur == ROUGE) {
+            sprintf(message, "Le tour du joueur ROUGE est terminé.");
+        } else {
+            sprintf(message, "Le tour du joueur BLEU est terminé.");
+        }
         ecrireMessage(message);
-        MLV_wait_seconds(1);
+        MLV_wait_milliseconds(1500);
 
         /* remet le compteur d'actions effectuées à 0 */
         tmp = liste;
