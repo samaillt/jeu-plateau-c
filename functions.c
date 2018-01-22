@@ -517,12 +517,9 @@ void gererDemiTour(char joueur, Monde *monde) {
 
                 if (choix == 1) {
                     if (actuel->genre == REINE){
-                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\n
-                            L'unité actuelle étant une reine, veuillez entrer les coordonnées de sa case pour lancer la production\n
-                            d'unité ou les coordonnées d'une unité à attaquer (Portée : 1) (ATTENTION, la reine ne peut pas se déplacer !)");
+                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\nL'unité actuelle étant une reine, veuillez entrer les coordonnées de sa case pour lancer la production\nd'unité ou les coordonnées d'une unité à attaquer (Portée : 1) (ATTENTION, la reine ne peut pas se déplacer !)");
                     } else{
-                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\n
-                            Veuillez cliquer sur la case cible.\n");
+                        sprintf(message, "L'utilisateur souhaite effectuer une (ou plusieurs) action(s) avec l'Unité.\nVeuillez cliquer sur la case cible.\n");
                     }
                     ecrireMessage(message);
                     MLV_draw_filled_rectangle(ESPACE + (LARG+.5)*COTECASE, ESPACE, 300, 500, MLV_rgba(18,18,18,255));
