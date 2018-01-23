@@ -1,4 +1,6 @@
-# Améliorations intéressantes à faire :
+#Jeu de plateau en c
+
+### Améliorations intéressantes à faire :
 
 - [x] A chaque tour, choisir à l’aléatoire le joueur qui joue en premier.
 - [x] Ajouter un système de points d'attaque / défense / vie (avec à chaque attaque ou défense une valeur fixe +- une petite valeur aléatoire)
@@ -8,13 +10,9 @@
 - [x] Permettre aux joueurs de faire attendre les unités et de reprendre leur action plus tard (passer le tour de l'unité et revenir ensuite)
 - [ ] Sauvegarder la partie en cours dans un fichier pour pouvoir la reprendre plus tard (cf. sujet)
 
-
-- Implémenter une interface graphique avec MLV (En cours)
-- Ajouter des images pour les unités etc
-
 ### Implémenter une interface graphique avec MLV :
 - [x] Ajouter des images pour les différentes unités
-- [ ] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso ?
+- [x] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso ?
 - [x] Cliquer sur les cases pour se positionner.
 - [x] Cliquer sur les cases pour se déplacer et attaquer.
 - [x] Fin du tour : Bouton Continuer / Arrêter.
@@ -24,9 +22,9 @@
 - [x] Afficher le compteur de tours
 - [x] Afficher les images dans la liste des unités
 
-- FINIIIIIR LEEEE RAPPOOOOOORRTT !!!!!!!!!
 
 A FAIRE AMELIO : 
+- FINIIIIIR LEEEE RAPPOOOOOORRTT !!!!!!!!!
 - (Savoir si on chosit la case dans tout le plateau ou nom pour la prod d'unité)
 - Faire apparaître à chaque action les "cases contours" possibles
 afficher la vie et les dégâts
