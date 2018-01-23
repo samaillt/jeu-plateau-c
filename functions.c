@@ -139,12 +139,12 @@ int creerUnite(char type, UListe * unite){
         u->ptMouvement=2;
     }
     else if (type == SERF){
-        u->ptAttaque = 40;
+        u->ptAttaque = 50;
         u->ptVie = 75;
         u->ptMouvement=1;
     }
     else {
-        u->ptAttaque = 15;
+        u->ptAttaque = 75;
         u->ptVie = 200;
         u->ptMouvement=0;
     }
