@@ -133,18 +133,25 @@ int creerUnite(char type, UListe * unite){
         exit(EXIT_FAILURE);
     }
     u->genre = type;
-    u->ptVie = 100;
     if (type == GUERRIER){
-        u->ptAttaque = 50;
+        u->ptAttaque = 75;
+        u->ptVie = 100;
+        u->ptMouvement=2;
     }
     else if (type == SERF){
-        u->ptAttaque = 25;
+        u->ptAttaque = 40;
+        u->ptVie = 75;
+        u->ptMouvement=1;
     }
     else {
-        u->ptAttaque = 100;
+        u->ptAttaque = 15;
+        u->ptVie = 200;
+        u->ptMouvement=0;
     }
+    u->cptTour=-1;
     u->action = 0;
     u->suiv = NULL;
+    u->uniteEnProduction = 0;
     *unite = u;
     return 1;
 }
@@ -272,6 +279,10 @@ int placerAuMonde(Unite *unite, Monde *monde, int posX, int posY, char couleur){
     }
 }
 
+// void produireUnite(){
+
+// }
+
 /* Fonction qui ne retourne rien et prend en paramètre une unité, les coordonnées du déplacement et le monde et qui déplace une unité vers une case spécifiée par les coordonnées */
 void deplacerUnite(Unite *unite, Monde *monde, int destX, int destY) {
     monde->plateau[unite->posY][unite->posX] = NULL;
@@ -360,6 +371,7 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
 /* Fonction qui remplace deplacerOuAttaquer et retourne un entier en paramètre pour la gestion d'erreur et au resultat et qui prend en paramètre une unité, les coordonnées de l'action et le monde et qui qui gère le déplacements et le combat */
 int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
     char message[MESSAGE_MAX_SIZE];
+    int choix;
     if (unite->genre == REINE){
         /* Si les coordonnées sont invalides, la fonction retourne -1 */
         if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
@@ -376,9 +388,21 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             }
         }
         if (monde->plateau[destY][destX] == unite){
-            sprintf(message, "La reine peut produire une unité");
-            ecrireMessage(message);
-            MLV_wait_milliseconds(1500);
+            do {
+                sprintf(message, "Selectionnez l'unité à produire ( 1: Guerrier (4 tours) 2: Serf (2 tours) )");
+                ecrireMessage(message);
+                printf("Selectionnez l'unité à produire ( 1: Guerrier (4 tours) 2: Serf (2 tours) )\n");
+                MLV_wait_milliseconds(1500);
+                scanf("%d",&choix);
+                printf("ok\n");
+            } while (choix != 1 && choix != 2);
+            if (choix == 1){
+                unite->cptTour = 4;
+                unite->uniteEnProduction = GUERRIER;
+            } else {
+                unite->cptTour = 2;
+                unite->uniteEnProduction = SERF;
+            }
             return 1;
         }
         /*  Si la case destination est vide et adjacente, erreur car la reine ne peut pas se déplacer donc erreur d'invalidité.
@@ -408,12 +432,9 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
         /* Si les coordonnées sont invalides, la fonction retourne -1 */
         if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
             return -1;
-        }    
-        /* Si la case marquée par les coordonnées n'est pas voisine à celle où l’unité en question se trouve si l'unité est un serf ou, si c'est un guerrier, si ell est à plus de deux cases de ce dernier, la fonction retourne -2 */
-        if (unite->genre == GUERRIER && (destX > unite->posX + 2 || destX < unite->posX - 2 || destY > unite->posY + 2 || destY < unite->posY - 2 )){
-            return -2;
         }
-        if (unite->genre == SERF && (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 )) {
+        /* Si les coordonnées de sont pas adjacentes, la fonction retourne -2 */
+        if (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 ) {
             return -2;
         }
         /* Si la case marquée par les coordonnées est déjà occupée par une unité alliée, la fonction retourne -3 */
@@ -426,17 +447,25 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             Si la case de destination est valide, adjacente, et occupée par un ennemi, un combat prend lieu. 
             La fonction retourne 2 si l'attaquant a gagné ou 3 s'il a seulement infligé des dégats */
         if (monde->plateau[destY][destX] == NULL) {
-            deplacerUnite(unite, monde, destX, destY);
-            printf("L'unité s'est deplacée\n");
-            return 1;
+            if (unite->ptMouvement > 0){
+                deplacerUnite(unite, monde, destX, destY);
+                printf("L'unité s'est deplacée\n");
+                unite->ptMouvement -= 1;
+                return 1;
+            } else {
+                printf("Erreur, l'unité ne peut plus se déplacer\n");
+                return -4;
+            }
         } else {
             /*  Un ennemi a été rencontré */
             if (attaquer(unite, monde, destX, destY) == 1) {
                 printf("L'attaquant à éliminé le défenseur\n");
                 // printf("Victoire de l'attaquant\n");
+                unite->ptMouvement = (-1);
                 return 2;
             } else {
                 printf("L'attaquant à infligé des dégats au défenseur\n");
+                unite->ptMouvement = (-1);
                 // printf("Défaite de l'attaquant\n");
                 return 3;
             }
@@ -554,16 +583,43 @@ void gererDemiTour(char joueur, Monde *monde) {
                     MLV_draw_filled_rectangle(ESPACE + (LARG+.5)*COTECASE, ESPACE, 300, 500, MLV_rgba(18,18,18,255));
                     MLV_actualise_window();
 
-                    do {
-                        MLV_wait_mouse( &mouseX, &mouseY );
-                        if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
-                            x = (mouseX-ESPACE)/COTECASE;
-                            y = (mouseY-ESPACE)/COTECASE;
+                    if (actuel->genre == REINE){
+                        if (actuel->cptTour < 0 && actuel->uniteEnProduction == 0){
+                            do {
+                                MLV_wait_mouse( &mouseX, &mouseY );
+                                if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
+                                    x = (mouseX-ESPACE)/COTECASE;
+                                    y = (mouseY-ESPACE)/COTECASE;
+                                }
+                            } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
+
+                            if (actionUnite(actuel, monde, x, y) < 0){
+                                printf("Ordre non valide, on passe à l'action suivante\n");
+                            }
+                        } else if (actuel->cptTour == 0){
+                            Unite *u;
+                            creerUnite(actuel->uniteEnProduction,&u);
+                            positionnerUnite(u, monde, actuel->couleur);
+                            actuel->cptTour = -1;
+                        } else if (actuel->cptTour > 0){
+                            actuel->cptTour -= 1;
                         }
-                    } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
-                    
-                    if (actionUnite(actuel, monde, x, y) < 0){
-                        printf("Ordre non valide, on passe à l'unité suivante\n");
+                    } else {
+                        while (actuel->ptMouvement+1 > 0){
+                            do {
+                                MLV_wait_mouse( &mouseX, &mouseY );
+                                if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
+                                    x = (mouseX-ESPACE)/COTECASE;
+                                    y = (mouseY-ESPACE)/COTECASE;
+                                }
+                            } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
+                            if (actionUnite(actuel, monde, x, y) < 0){
+                                printf("Ordre non valide, on passe à l'action suivante\n");
+                                actuel->ptMouvement -= 1;
+
+                            }
+                            affichePlateau(monde);
+                        }
                     }
                     actuel->action=1;
                     actuel = actuel->suiv;
@@ -630,6 +686,15 @@ void gererDemiTour(char joueur, Monde *monde) {
         tmp = liste;
         while (tmp != NULL){
             tmp->action = 0;
+            if (tmp->genre == GUERRIER){
+                tmp->ptMouvement=2;
+            }
+            else if (tmp->genre == SERF){
+                tmp->ptMouvement=1;
+            }
+            else {
+                tmp->ptMouvement=0;
+            }
             tmp = tmp->suiv;
         }
     }
