@@ -1,4 +1,4 @@
-#Jeu de plateau en c
+# Jeu de plateau en c
 
 ### Améliorations intéressantes à faire :
 
@@ -11,7 +11,7 @@
 - [ ] Sauvegarder la partie en cours dans un fichier pour pouvoir la reprendre plus tard (cf. sujet)
 
 
-### *Bugs à corriger*
+### **Bugs à corriger**
 - [ ] Les reines peuvent attaquer n'importe où
 - [ ] Si il n'y a personne à côté à attaquer, passer à l'unité suivante (seulement si les points de mouvements sont à zéro)
 
@@ -27,7 +27,7 @@
 - [x] Guerrier : 2 cases de portées autour
 - [x] Afficher le compteur de tours
 - [x] Afficher les images dans la liste des unités
-- [ ] *Afficher les points de mouvements en cours ?*
+- [ ] **Afficher les points de mouvements en cours ?**
 
 
 A FAIRE AMELIO : 
