@@ -601,6 +601,7 @@ void gererDemiTour(char joueur, Monde *monde) {
                             creerUnite(actuel->uniteEnProduction,&u);
                             positionnerUnite(u, monde, actuel->couleur);
                             actuel->cptTour = -1;
+                            actuel->uniteEnProduction = 0;
                         } else if (actuel->cptTour > 0){
                             actuel->cptTour -= 1;
                         }
