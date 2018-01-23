@@ -40,11 +40,13 @@
 typedef struct unite{
     int posX, posY; /* Pour stocker les coordonnées de l'unité */
     char couleur; /* ROUGE ou BLEU */
-    char genre; /* GUERRIER ou SERF (ou REINE) */
+    char genre; /* GUERRIER ou SERF ou REINE */
     int ptVie; /* Nombre de vie de l'unité */
     int ptAttaque; /* Points d'attaque de l'unité */
+    int ptMouvement; /* Points de mouvement de l'unité */
     int action; /* Entier qui vaudra 1 si l'unité peut effectuer une action ou 0 sinon */
-    int cpt; /* Compteur utilisable pour la reine qui produit des unités */
+    int cptTour; /* Compteur utilisable pour la reine qui produit des unités */
+    char uniteEnProduction; /* GUERRIER ou SERF ou 0 lorsqu'il n'y en a pas */
     struct unite *suiv; /* liste des unités suivantes */
 } Unite;
 
@@ -80,5 +82,6 @@ void afficherListes(Monde monde);
 void ecrireMessage(char message[]);
 void effacerBoutons(void);
 void afficherUnites(Monde monde);
+void colorerCasesAdj(Monde monde, Unite unite);
 
 #endif

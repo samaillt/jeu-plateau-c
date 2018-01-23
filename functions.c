@@ -140,18 +140,25 @@ int creerUnite(char type, UListe * unite){
         exit(EXIT_FAILURE);
     }
     u->genre = type;
-    u->ptVie = 100;
     if (type == GUERRIER){
-        u->ptAttaque = 50;
+        u->ptAttaque = 75;
+        u->ptVie = 100;
+        u->ptMouvement=2;
     }
     else if (type == SERF){
-        u->ptAttaque = 25;
+        u->ptAttaque = 50;
+        u->ptVie = 75;
+        u->ptMouvement=1;
     }
     else {
-        u->ptAttaque = 100;
+        u->ptAttaque = 75;
+        u->ptVie = 200;
+        u->ptMouvement=0;
     }
+    u->cptTour=-1;
     u->action = 0;
     u->suiv = NULL;
+    u->uniteEnProduction = 0;
     *unite = u;
     return 1;
 }
@@ -304,6 +311,10 @@ int placerAuMonde(Unite *unite, Monde *monde, int posX, int posY, char couleur){
     }
 }
 
+// void produireUnite(){
+
+// }
+
 /* Fonction qui ne retourne rien et prend en paramètre une unité, les coordonnées du déplacement et le monde et qui déplace une unité vers une case spécifiée par les coordonnées */
 void deplacerUnite(Unite *unite, Monde *monde, int destX, int destY) {
     monde->plateau[unite->posY][unite->posX] = NULL;
@@ -410,6 +421,7 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
 /* Fonction qui remplace deplacerOuAttaquer et retourne un entier en paramètre pour la gestion d'erreur et au resultat et qui prend en paramètre une unité, les coordonnées de l'action et le monde et qui qui gère le déplacements et le combat */
 int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
     char message[MESSAGE_MAX_SIZE];
+    int choix, mouseX, mouseY;
     if (unite->genre == REINE){
         /* Si les coordonnées sont invalides, la fonction retourne -1 */
         if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
@@ -426,7 +438,55 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             }
         }
         if (monde->plateau[destY][destX] == unite){
-            sprintf(message, "La reine peut produire une unité");
+
+            sprintf(message, "Selectionnez l'unité à produire");
+            ecrireMessage(message);
+
+            MLV_draw_text_box(
+                ESPACE + (LARG+.5)*COTECASE, ESPACE, 
+                170, COTECASE,
+                "Guerrier (4 tours)",
+                10,
+                MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
+                MLV_TEXT_CENTER,
+                MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+            );
+            MLV_draw_text_box(
+                ESPACE + (LARG+.5)*COTECASE, ESPACE + COTECASE + COTECASE/2, 
+                170, COTECASE,
+                "Serf (2 tours)",
+                10,
+                MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
+                MLV_TEXT_CENTER,
+                MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
+            );
+
+            MLV_actualise_window();
+
+            choix = 0;
+            while (choix == 0) {
+                MLV_wait_mouse( &mouseX, &mouseY );
+                if ((mouseX > ESPACE + (LARG+0.5)*COTECASE) && (mouseX < (ESPACE + (LARG+0.5)*COTECASE) + 170)) {
+                    /* Bouton "Guerrier (4 tours)" */
+                    if ((mouseY > ESPACE) && (mouseY < ESPACE + COTECASE)) {
+                        choix = 1;
+                    }
+                    /* Bouton "Serf (2 tours)" */
+                    else if ((mouseY > ESPACE + COTECASE + COTECASE/2) && (mouseY < (ESPACE + COTECASE + COTECASE/2) + COTECASE)) {
+                        choix = 2;
+                    }
+                }
+            }
+
+            if (choix == 1){
+                unite->cptTour = 4;
+                unite->uniteEnProduction = GUERRIER;
+                sprintf(message, "Vous avez lancé la production d'un guerrier");
+            } else {
+                unite->cptTour = 2;
+                unite->uniteEnProduction = SERF;
+                sprintf(message, "Vous avez lancé la production d'un serf");
+            }
             ecrireMessage(message);
             MLV_wait_milliseconds(TIME_DELAY);
             return 1;
@@ -458,12 +518,9 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
         /* Si les coordonnées sont invalides, la fonction retourne -1 */
         if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
             return -1;
-        }    
-        /* Si la case marquée par les coordonnées n'est pas voisine à celle où l’unité en question se trouve si l'unité est un serf ou, si c'est un guerrier, si ell est à plus de deux cases de ce dernier, la fonction retourne -2 */
-        if (unite->genre == GUERRIER && (destX > unite->posX + 2 || destX < unite->posX - 2 || destY > unite->posY + 2 || destY < unite->posY - 2 )){
-            return -2;
         }
-        if (unite->genre == SERF && (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 )) {
+        /* Si les coordonnées de sont pas adjacentes, la fonction retourne -2 */
+        if (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 ) {
             return -2;
         }
         /* Si la case marquée par les coordonnées est déjà occupée par une unité alliée, la fonction retourne -3 */
@@ -476,17 +533,25 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             Si la case de destination est valide, adjacente, et occupée par un ennemi, un combat prend lieu. 
             La fonction retourne 2 si l'attaquant a gagné ou 3 s'il a seulement infligé des dégats */
         if (monde->plateau[destY][destX] == NULL) {
-            deplacerUnite(unite, monde, destX, destY);
-            printf("L'unité s'est deplacée\n");
-            return 1;
+            if (unite->ptMouvement > 0){
+                deplacerUnite(unite, monde, destX, destY);
+                printf("L'unité s'est deplacée\n");
+                unite->ptMouvement -= 1;
+                return 1;
+            } else {
+                printf("Erreur, l'unité ne peut plus se déplacer\n");
+                return -4;
+            }
         } else {
             /*  Un ennemi a été rencontré */
             if (attaquer(unite, monde, destX, destY) == 1) {
                 printf("L'attaquant à éliminé le défenseur\n");
                 // printf("Victoire de l'attaquant\n");
+                unite->ptMouvement = (-1);
                 return 2;
             } else {
                 printf("L'attaquant à infligé des dégats au défenseur\n");
+                unite->ptMouvement = (-1);
                 // printf("Défaite de l'attaquant\n");
                 return 3;
             }
@@ -497,7 +562,7 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
 /* Fonction qui ne retourne rien et prend en paramètre le joueur et le monde et qui gère toutes les actions d’un joueur pendant son tour */
 void gererDemiTour(char joueur, Monde *monde) {
     /* Parcourir les unités du joueur */
-    int choix, x, y, i, j, uniteEnAttente, mouseX, mouseY, portee;
+    int choix, x, y, uniteEnAttente, mouseX, mouseY;
     char finDeTour;
     char message[MESSAGE_MAX_SIZE];
     UListe liste;
@@ -543,41 +608,24 @@ void gererDemiTour(char joueur, Monde *monde) {
                 sprintf(message, "Unité actuelle : %s (%d, %d)\nQue souhaitez-vous faire ?\n - Effectuer une (ou plusieurs) action(s) avec l'unité\n - Mettre l'unité en attente\n - Ne rien faire", nom_unite, actuel->posX, actuel->posY);
                 ecrireMessage(message);
 
-                /* Affichage des carrés de couleur autour de l'unité actuelle : VERT pour les alliés et les cases disponibles, ROUGE pour les ennemis */
-                if (actuel->genre == GUERRIER)
-                {
-                    portee = 2;
-                } else {
-                    portee = 1;
-                }
-                for (i = -portee; i <= portee; ++i)
-                {
-                    for (j = -portee; j <= portee; ++j)
-                    {
-                        if ((actuel->posY + j >= 0) && (actuel->posX + i >= 0) && (actuel->posY + j < LONG) && (actuel->posX + i < LARG)) {
-                            if ((i != 0) || (j != 0)) {
-                                if (monde->plateau[actuel->posY + j][actuel->posX + i] == NULL) {
-                                    MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + ESPACE), (actuel->posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_COLOR_PALE_GREEN);
-                                } else if ((monde->plateau[actuel->posY + j][actuel->posX + i]->couleur == actuel->couleur)) {
-                                    MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + ESPACE), (actuel->posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(50,255,50,50));
-                                } else {
-                                    MLV_draw_filled_rectangle((actuel->posX*COTECASE) + (i*COTECASE + ESPACE), (actuel->posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(255,50,50,50));
-                                }
-                            MLV_draw_rectangle((actuel->posX*COTECASE) + (i*COTECASE + ESPACE), (actuel->posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_COLOR_BLACK);
-                            } else {
-                                MLV_draw_rectangle((actuel->posX*COTECASE) + (i*COTECASE + ESPACE), (actuel->posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(120,0,255,255));
-                            }
-                            
-                        } 
-                    }
-                }
-                MLV_actualise_window();
+                colorerCasesAdj(*monde, *actuel);
 
+                if ((actuel->genre == REINE)) {
+                    if (actuel->cptTour > 0) {
+                        sprintf(message, "Continuer la production");
+                    } else if (actuel->cptTour == 0) {
+                        sprintf(message, "Placer l'unité");
+                    } else {
+                        sprintf(message, "Effectuer une action");
+                    }
+                } else {
+                    sprintf(message, "Effectuer une action");
+                }
 
                 MLV_draw_text_box(
                     ESPACE + (LARG+.5)*COTECASE, ESPACE, 
                     170, COTECASE,
-                    "Effectuer une action",
+                    message,
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
                     MLV_TEXT_CENTER,
@@ -632,16 +680,52 @@ void gererDemiTour(char joueur, Monde *monde) {
                     effacerBoutons();
                     MLV_actualise_window();
 
-                    do {
-                        MLV_wait_mouse( &mouseX, &mouseY );
-                        if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
-                            x = (mouseX-ESPACE)/COTECASE;
-                            y = (mouseY-ESPACE)/COTECASE;
+                    if (actuel->genre == REINE){
+                        if (actuel->cptTour < 0 && actuel->uniteEnProduction == 0){
+                            do {
+                                MLV_wait_mouse( &mouseX, &mouseY );
+                                if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
+                                    x = (mouseX-ESPACE)/COTECASE;
+                                    y = (mouseY-ESPACE)/COTECASE;
+                                }
+                            } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
+
+                            if (actionUnite(actuel, monde, x, y) < 0){
+                                printf("Ordre non valide, on passe à l'action suivante\n");
+                            }
+                        } else if (actuel->cptTour == 0){
+                            Unite *u;
+                            creerUnite(actuel->uniteEnProduction,&u);
+                            positionnerUnite(u, monde, actuel->couleur);
+                            actuel->cptTour = -1;
+                            actuel->uniteEnProduction = 0;
+                        } else if (actuel->cptTour > 0){
+                            actuel->cptTour -= 1;
+                            if (actuel->cptTour == 0) {
+                                sprintf(message, "La production est terminée, vous pourrez placer une unité au prochain tour.");
+                            } else {
+                                sprintf(message, "Il reste %d tour(s) de production", actuel->cptTour);
+                            }
+                            
+                            ecrireMessage(message);
+                            MLV_wait_milliseconds(TIME_DELAY);
                         }
-                    } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
-                    
-                    if (actionUnite(actuel, monde, x, y) < 0){
-                        printf("Ordre non valide, on passe à l'unité suivante\n");
+                    } else {
+                        while (actuel->ptMouvement+1 > 0){
+                            colorerCasesAdj(*monde, *actuel);
+                            do {
+                                MLV_wait_mouse( &mouseX, &mouseY );
+                                if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
+                                    x = (mouseX-ESPACE)/COTECASE;
+                                    y = (mouseY-ESPACE)/COTECASE;
+                                }
+                            } while ((mouseX > (LARG*COTECASE + ESPACE)) && (mouseX < ESPACE) && (mouseY > (LONG*COTECASE + ESPACE)) && (mouseY < ESPACE));
+                            if (actionUnite(actuel, monde, x, y) < 0){
+                                printf("Ordre non valide, on passe à l'action suivante\n");
+                                actuel->ptMouvement -= 1;
+                            }
+                            affichePlateau(monde);
+                        }
                     }
                     actuel->action=1;
                     actuel = actuel->suiv;
@@ -711,6 +795,15 @@ void gererDemiTour(char joueur, Monde *monde) {
         tmp = liste;
         while (tmp != NULL){
             tmp->action = 0;
+            if (tmp->genre == GUERRIER){
+                tmp->ptMouvement=2;
+            }
+            else if (tmp->genre == SERF){
+                tmp->ptMouvement=1;
+            }
+            else {
+                tmp->ptMouvement=0;
+            }
             tmp = tmp->suiv;
         }
     }
@@ -880,6 +973,7 @@ void effacerBoutons(){
     MLV_actualise_window();
 }
 
+
 /* Fontion qui ne retourne rien et prend en paramètre le monde pour afficher le contenu des listes des deux joueurs dans l'interface graphique */
 void afficherUnites(Monde monde){
     int compteur_bleu, x, y, rouge_offset;
@@ -973,4 +1067,36 @@ void afficherUnites(Monde monde){
     MLV_free_image( guerrier_bleu_img );
     MLV_free_image( serf_bleu_img );
     MLV_free_image( reine_bleu_img );
+}
+
+/* Fonction qui colore les case adjacentes à l'unité courante en vert si vide, vert transparent si allié et rouge tranparent si ennemi */
+void colorerCasesAdj(Monde monde, Unite unite){
+    int i, j, portee;
+    MLV_Color couleur_case;
+    portee = 1;
+    for (i = -portee; i <= portee; ++i)
+    {
+        for (j = -portee; j <= portee; ++j)
+        {
+            if ((unite.posY + j >= 0) && (unite.posX + i >= 0) && (unite.posY + j < LONG) && (unite.posX + i < LARG)) {
+                if ((i != 0) || (j != 0)) {
+                    if (monde.plateau[unite.posY + j][unite.posX + i] == NULL) {
+                        couleur_case = MLV_COLOR_PALE_GREEN; //Couleur vert pâle
+                    } else if ((monde.plateau[unite.posY + j][unite.posX + i]->couleur == unite.couleur)) {
+                        couleur_case = MLV_rgba(50,255,50,50); //Couleur vert transparent
+                        MLV_draw_filled_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(50,255,50,50));
+                    } else {
+                        couleur_case = MLV_rgba(255,50,50,50); //Couleur rouge transparent
+                        MLV_draw_filled_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(255,50,50,50));
+                    }
+                MLV_draw_filled_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, couleur_case);
+                MLV_draw_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_COLOR_BLACK);
+                } else {
+                    MLV_draw_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(120,0,255,255));
+                }
+                
+            } 
+        }
+    }
+    MLV_actualise_window();
 }
