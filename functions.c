@@ -18,6 +18,8 @@ void initialiserFenetre(void){
     /* Affiche un fond gris */
     MLV_draw_filled_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, MLV_rgba(18, 18, 18, 255));
 
+    MLV_draw_rectangle(ESPACE/2 - 5, Y_PREMIER_BOUTON-5, BUTTON_WIDTH+10, 4*BUTTON_HEIGHT+10, MLV_rgba(50,50,50,255));
+
     /* Met a jour l'affichage de la fenêtre. */
     MLV_actualise_window();
 
@@ -97,6 +99,7 @@ void affichePlateau(Monde *monde){
             
             MLV_draw_filled_rectangle(j*COTECASE + ESPACE, i*COTECASE + ESPACE, COTECASE, COTECASE, background_color);
             MLV_draw_rectangle(j*COTECASE + ESPACE, i*COTECASE + ESPACE, COTECASE, COTECASE, MLV_COLOR_BLACK);
+            MLV_draw_rectangle(j*COTECASE + ESPACE -1, i*COTECASE + ESPACE-1, COTECASE+2, COTECASE+2, MLV_COLOR_BLACK);
             if (monde->plateau[i][j]) {
                 if (monde->plateau[i][j]->genre == GUERRIER) {
                     if (monde->plateau[i][j]->couleur == BLEU) {
@@ -448,8 +451,8 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             ecrireMessage(message);
 
             MLV_draw_text_box(
-                ESPACE + (LARG+.5)*COTECASE, ESPACE, 
-                170, COTECASE,
+                ESPACE/2, Y_PREMIER_BOUTON,
+                BUTTON_WIDTH, BUTTON_HEIGHT,
                 "Guerrier (4 tours)",
                 10,
                 MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -457,8 +460,8 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
                 MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
             );
             MLV_draw_text_box(
-                ESPACE + (LARG+.5)*COTECASE, ESPACE + COTECASE + COTECASE/2, 
-                170, COTECASE,
+                ESPACE/2, Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS, 
+                BUTTON_WIDTH, BUTTON_HEIGHT,
                 "Serf (2 tours)",
                 10,
                 MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -471,13 +474,13 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             choix = 0;
             while (choix == 0) {
                 MLV_wait_mouse( &mouseX, &mouseY );
-                if ((mouseX > ESPACE + (LARG+0.5)*COTECASE) && (mouseX < (ESPACE + (LARG+0.5)*COTECASE) + 170)) {
+                if ((mouseX > ESPACE/2) && (mouseX < ESPACE/2 + BUTTON_WIDTH)) {
                     /* Bouton "Guerrier (4 tours)" */
-                    if ((mouseY > ESPACE) && (mouseY < ESPACE + COTECASE)) {
+                    if ((mouseY > Y_PREMIER_BOUTON) && (mouseY < Y_PREMIER_BOUTON + BUTTON_HEIGHT)) {
                         choix = 1;
                     }
                     /* Bouton "Serf (2 tours)" */
-                    else if ((mouseY > ESPACE + COTECASE + COTECASE/2) && (mouseY < (ESPACE + COTECASE + COTECASE/2) + COTECASE)) {
+                    else if ((mouseY > Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS) && (mouseY < Y_PREMIER_BOUTON + 2*BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS)) {
                         choix = 2;
                     }
                 }
@@ -586,10 +589,11 @@ void gererDemiTour(char joueur, Monde *monde) {
         couleur_joueur = "Rouge";
     }
     if(liste != NULL){
-        sprintf(message, "C'est le tour N°%d du joueur %s.", monde->tour, couleur_joueur);
-        ecrireMessage(message);
+        afficherTourJoueur(monde->tour, couleur_joueur);
+        // sprintf(message, "C'est le tour N°%d du joueur %s.", monde->tour, couleur_joueur);
+        // ecrireMessage(message);
         affichePlateau(monde);
-        MLV_wait_milliseconds(TIME_DELAY);
+        // MLV_wait_milliseconds(TIME_DELAY);
         Unite *actuel, *tmp;
         actuel = liste;
         while(actuel != NULL && uniteEnAttente == 1) {
@@ -788,13 +792,6 @@ void gererDemiTour(char joueur, Monde *monde) {
         }
 
         effacerBoutons();
-        if (joueur == ROUGE) {
-            sprintf(message, "Le tour du joueur Rouge est terminé.");
-        } else {
-            sprintf(message, "Le tour du joueur Bleu est terminé.");
-        }
-        ecrireMessage(message);
-        MLV_wait_milliseconds(TIME_DELAY);
 
         /* remet le compteur d'actions effectuées à 0 */
         tmp = liste;
@@ -964,10 +961,10 @@ void afficherListes(Monde monde){
 
 void ecrireMessage(char message[]){
     //Efface l'espace
-    MLV_draw_filled_rectangle(BUTTON_WIDTH + ESPACE, Y_PREMIER_BOUTON, LARG*COTECASE, WINDOW_HEIGHT, MLV_rgba(18,18,18,255));
+    MLV_draw_filled_rectangle(BUTTON_WIDTH + ESPACE - 5, Y_PREMIER_BOUTON-5, LARG*COTECASE+10, WINDOW_HEIGHT+10, MLV_rgba(18,18,18,255));
     //Affiche le nouveau message
     MLV_draw_adapted_text_box(
-        BUTTON_WIDTH + ESPACE, Y_PREMIER_BOUTON,
+        BUTTON_WIDTH + ESPACE -5, Y_PREMIER_BOUTON-5,
         message,
         10,
         MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY,
@@ -979,6 +976,7 @@ void ecrireMessage(char message[]){
 
 void effacerBoutons(){
     MLV_draw_filled_rectangle(ESPACE/2, Y_PREMIER_BOUTON, BUTTON_WIDTH, 4*BUTTON_HEIGHT, MLV_rgba(18,18,18,255));
+    MLV_draw_rectangle(ESPACE/2 - 5, Y_PREMIER_BOUTON-5, BUTTON_WIDTH+10, 4*BUTTON_HEIGHT+10, MLV_rgba(50,50,50,255));
     MLV_actualise_window();
 }
 
@@ -1014,7 +1012,7 @@ void afficherUnites(Monde monde){
             y = ESPACE + compteur*50;
 
             //Affiches les infos sous forme de texte
-            sprintf(message, "      (%d, %d), PV : %d/%d", actuel->posX, actuel->posY, actuel->ptVie, actuel->ptVieMax);
+            sprintf(message, "        (%d, %d), PV : %d/%d", actuel->posX, actuel->posY, actuel->ptVie, actuel->ptVieMax);
             MLV_draw_adapted_text_box(
                 x, y,
                 message,
@@ -1110,10 +1108,32 @@ void colorerCasesAdj(Monde monde, Unite unite){
 /* Fonction qui colore le contour de la case de l'unite courante en violet */
 void colorerCaseCourante(Monde monde, Unite unite){
     MLV_Color couleur_case;
-
     couleur_case = MLV_COLOR_PURPLE;
     MLV_draw_rectangle(unite.posX*COTECASE + ESPACE - 1, unite.posY*COTECASE + ESPACE - 1, COTECASE + 2, COTECASE + 2, couleur_case);
     MLV_draw_rectangle(unite.posX*COTECASE + ESPACE, unite.posY*COTECASE + ESPACE, COTECASE, COTECASE, couleur_case);
+    MLV_actualise_window();
+}
 
+/* Fonction qui affiche le numéro du tour et quel joueur est en train de jouer */
+void afficherTourJoueur(int num_tour, char couleur[]){
+    char message[MESSAGE_MAX_SIZE];
+    MLV_Color couleur_texte;
+    sprintf(message, "Tour N°%d - Joueur %s.", num_tour, couleur);
+
+    if (strcmp(couleur, "Bleu"))
+    {
+        // couleur_texte = MLV_rgba(255,50,50,255);
+        couleur_texte = MLV_COLOR_INDIANRED3;
+    } else {
+        couleur_texte = MLV_COLOR_SKYBLUE3;
+    }
+    MLV_draw_filled_rectangle(ESPACE + (LARG+0.5)*COTECASE, 0, 2*BUTTON_WIDTH, ESPACE, MLV_rgba(18,18,18,255));
+    MLV_draw_adapted_text_box(
+        ESPACE + (LARG+0.5)*COTECASE, 0,
+        message,
+        10,
+        MLV_rgba(18,18,18,255), couleur_texte, MLV_rgba(18,18,18,255),
+        MLV_TEXT_LEFT
+    );
     MLV_actualise_window();
 }
