@@ -143,16 +143,19 @@ int creerUnite(char type, UListe * unite){
     if (type == GUERRIER){
         u->ptAttaque = 75;
         u->ptVie = 100;
+        u->ptVieMax = 100;
         u->ptMouvement=2;
     }
     else if (type == SERF){
         u->ptAttaque = 50;
         u->ptVie = 75;
+        u->ptVieMax = 75;
         u->ptMouvement=1;
     }
-    else {
+    else if (type == REINE) {
         u->ptAttaque = 75;
         u->ptVie = 200;
+        u->ptVieMax = 200;
         u->ptMouvement=0;
     }
     u->cptTour=-1;
@@ -168,7 +171,7 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
     int posX, posY, mouseX, mouseY, x, y, i, j;
     MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img, *reine_rouge_img, *reine_bleu_img;
     MLV_Event event;
-    char message[200];
+    char message[MESSAGE_MAX_SIZE];
     char nom_unite[MESSAGE_MAX_SIZE];
     char *genre_unite;
     char *couleur_unite;
@@ -401,12 +404,14 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
     }
     if (defenseur->ptVie <= degats){
         sprintf(message, "Le défenseur (%s) meurt", nom_defenseur);
+        afficherUnites(*monde);
         ecrireMessage(message);
         MLV_wait_milliseconds(TIME_DELAY);
         enleverUnite(defenseur, monde);
         return 1;
     } else {
         sprintf(message, "Le défenseur (%s) perd %d points de vie", nom_defenseur, degats);
+        afficherUnites(*monde);
         ecrireMessage(message);
         MLV_wait_milliseconds(TIME_DELAY);
         defenseur->ptVie -= degats;
@@ -502,14 +507,14 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
         } else {
             /*  Un ennemi a été rencontré */
             if (attaquer(unite, monde, destX, destY) == 1) {
-                sprintf(message, "La reine à éliminée le défenseur");
-                ecrireMessage(message);
-                MLV_wait_milliseconds(TIME_DELAY);
+                // sprintf(message, "La reine a éliminé le défenseur");
+                // ecrireMessage(message);
+                // MLV_wait_milliseconds(TIME_DELAY);
                 return 2;
             } else {
-                sprintf(message, "La reine à infligée des dégats au défenseur");
-                ecrireMessage(message);
-                MLV_wait_milliseconds(TIME_DELAY);
+                // sprintf(message, "La reine a infligé des dégats au défenseur");
+                // ecrireMessage(message);
+                // MLV_wait_milliseconds(TIME_DELAY);
                 return 3;
             }
         }
@@ -623,8 +628,8 @@ void gererDemiTour(char joueur, Monde *monde) {
                 }
 
                 MLV_draw_text_box(
-                    ESPACE + (LARG+.5)*COTECASE, ESPACE, 
-                    170, COTECASE,
+                    ESPACE/2, Y_PREMIER_BOUTON,
+                    BUTTON_WIDTH, BUTTON_HEIGHT,
                     message,
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -632,8 +637,8 @@ void gererDemiTour(char joueur, Monde *monde) {
                     MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
                 );
                 MLV_draw_text_box(
-                    ESPACE + (LARG+.5)*COTECASE, ESPACE + COTECASE + COTECASE/2, 
-                    170, COTECASE,
+                    ESPACE/2, Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS, 
+                    BUTTON_WIDTH, BUTTON_HEIGHT,
                     "Mettre en attente",
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -641,8 +646,8 @@ void gererDemiTour(char joueur, Monde *monde) {
                     MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
                 );
                 MLV_draw_text_box(
-                    ESPACE + (LARG+.5)*COTECASE, ESPACE + 3 * COTECASE, 
-                    170, COTECASE,
+                    ESPACE/2, Y_PREMIER_BOUTON + 2*(BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS), 
+                    BUTTON_WIDTH, BUTTON_HEIGHT,
                     "Ne rien faire",
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -654,17 +659,17 @@ void gererDemiTour(char joueur, Monde *monde) {
                 choix = 0;
                 while (choix == 0) {
                     MLV_wait_mouse( &mouseX, &mouseY );
-                    if ((mouseX > ESPACE + (LARG+0.5)*COTECASE) && (mouseX < (ESPACE + (LARG+0.5)*COTECASE) + 170)) {
+                    if ((mouseX > ESPACE/2) && (mouseX < ESPACE/2 + BUTTON_WIDTH)) {
                         /* Bouton "Effectuer une action" */
-                        if ((mouseY > ESPACE) && (mouseY < ESPACE + COTECASE)) {
+                        if ((mouseY > Y_PREMIER_BOUTON) && (mouseY < Y_PREMIER_BOUTON + BUTTON_HEIGHT)) {
                             choix = 1;
                         }
                         /* Bouton "Mettre en attente" */
-                        else if ((mouseY > ESPACE + COTECASE + COTECASE/2) && (mouseY < (ESPACE + COTECASE + COTECASE/2) + COTECASE)) {
+                        else if ((mouseY > Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS) && (mouseY < Y_PREMIER_BOUTON + 2*BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS)) {
                             choix = 2;
                         }
                         /* Bouton "Ne rien faire" */
-                        else if ((mouseY > ESPACE + 3 * COTECASE) && (mouseY < (ESPACE + 3 * COTECASE) + COTECASE)) {
+                        else if ((mouseY > Y_PREMIER_BOUTON + 2*(BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS)) && (mouseY < Y_PREMIER_BOUTON + 2*(BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS) + BUTTON_HEIGHT)) {
                             choix = 3;
                         }
                     }
@@ -764,8 +769,8 @@ void gererDemiTour(char joueur, Monde *monde) {
 
 
         MLV_draw_text_box(
-            ESPACE + (LARG+.5)*COTECASE, ESPACE, 
-            170, COTECASE,
+            ESPACE/2, Y_PREMIER_BOUTON,
+            BUTTON_WIDTH, BUTTON_HEIGHT,
             "Fin du tour",
             10,
             MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -776,8 +781,8 @@ void gererDemiTour(char joueur, Monde *monde) {
 
         while (finDeTour == 0) {
             MLV_wait_mouse( &mouseX, &mouseY );
-            if ((mouseX > ESPACE + (LARG+0.5)*COTECASE) && (mouseX < (ESPACE + (LARG+0.5)*COTECASE) + 170) 
-                && (mouseY > ESPACE) && (mouseY < ESPACE + COTECASE)) {
+            if ((mouseX > ESPACE/2) && (mouseX < ESPACE/2 + BUTTON_WIDTH)
+                && (mouseY > Y_PREMIER_BOUTON) && (mouseY < Y_PREMIER_BOUTON + BUTTON_HEIGHT)) {
                 finDeTour = 1;
             }
         }
@@ -885,8 +890,8 @@ void gererPartie(void){
                 ecrireMessage(message);
 
                 MLV_draw_text_box(
-                    ESPACE + (LARG+.5)*COTECASE, ESPACE, 
-                    170, COTECASE,
+                    ESPACE/2, Y_PREMIER_BOUTON,
+                    BUTTON_WIDTH, BUTTON_HEIGHT,
                     "Continuer",
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -894,8 +899,8 @@ void gererPartie(void){
                     MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER
                 );
                 MLV_draw_text_box(
-                    ESPACE + (LARG+.5)*COTECASE, ESPACE + COTECASE + COTECASE/2, 
-                    170, COTECASE,
+                    ESPACE/2, Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS, 
+                    BUTTON_WIDTH, BUTTON_HEIGHT,
                     "Arrêter la partie",
                     10,
                     MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
@@ -907,14 +912,16 @@ void gererPartie(void){
                 do {
                     arreterPartie = -1;
                     MLV_wait_mouse( &mouseX, &mouseY );
-                    if ((mouseX > ESPACE + (LARG+0.5)*COTECASE) && (mouseX < (ESPACE + (LARG+0.5)*COTECASE) + 170)) {
+                    if ((mouseX > ESPACE/2) && (mouseX < ESPACE/2 + BUTTON_WIDTH)) {
                         /* Bouton "Continuer" */
-                        if ((mouseY > ESPACE) && (mouseY < ESPACE + COTECASE)) {
+                        if ((mouseY > Y_PREMIER_BOUTON) && (mouseY < Y_PREMIER_BOUTON + BUTTON_HEIGHT)) {
                             arreterPartie = 0;
+                            effacerBoutons();
                         }
                         /* Bouton "Arrêter la partie" */
-                        else if ((mouseY > ESPACE + COTECASE + COTECASE/2) && (mouseY < (ESPACE + COTECASE + COTECASE/2) + COTECASE)) {
+                        else if ((mouseY > Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS) && (mouseY < Y_PREMIER_BOUTON + 2*BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS)) {
                             arreterPartie = 1;
+                            effacerBoutons();
                         }
                     }
                 } while (arreterPartie == -1);
@@ -956,9 +963,11 @@ void afficherListes(Monde monde){
 }
 
 void ecrireMessage(char message[]){
-    MLV_draw_filled_rectangle(ESPACE, LONG*COTECASE + ESPACE + ESPACE, LARG*COTECASE, WINDOW_HEIGHT, MLV_rgba(18,18,18,255));
+    //Efface l'espace
+    MLV_draw_filled_rectangle(BUTTON_WIDTH + ESPACE, Y_PREMIER_BOUTON, LARG*COTECASE, WINDOW_HEIGHT, MLV_rgba(18,18,18,255));
+    //Affiche le nouveau message
     MLV_draw_adapted_text_box(
-        45, LONG*COTECASE + ESPACE + 40,
+        BUTTON_WIDTH + ESPACE, Y_PREMIER_BOUTON,
         message,
         10,
         MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY,
@@ -969,17 +978,17 @@ void ecrireMessage(char message[]){
 }
 
 void effacerBoutons(){
-    MLV_draw_filled_rectangle(ESPACE + (LARG+.5)*COTECASE, ESPACE, 300, 4*COTECASE, MLV_rgba(18,18,18,255));
+    MLV_draw_filled_rectangle(ESPACE/2, Y_PREMIER_BOUTON, BUTTON_WIDTH, 4*BUTTON_HEIGHT, MLV_rgba(18,18,18,255));
     MLV_actualise_window();
 }
 
 
 /* Fontion qui ne retourne rien et prend en paramètre le monde pour afficher le contenu des listes des deux joueurs dans l'interface graphique */
 void afficherUnites(Monde monde){
-    int compteur_bleu, x, y, rouge_offset;
+    int compteur, x, y;
     char message[MESSAGE_MAX_SIZE];
     MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img, *reine_rouge_img, *reine_bleu_img;
-    compteur_bleu = 0;
+    compteur = 0;
 
     //Charge les images
     guerrier_rouge_img = MLV_load_image( "img/guerrier_rouge.png" );
@@ -995,17 +1004,17 @@ void afficherUnites(Monde monde){
     MLV_resize_image_with_proportions( reine_rouge_img, COTECASE-10, COTECASE-10 );
     MLV_resize_image_with_proportions( reine_bleu_img, COTECASE-10, COTECASE-10 );
 
-    //Efface les unités précédentes
-    MLV_draw_filled_rectangle(ESPACE + (LARG+0.5)*COTECASE, 5*COTECASE + ESPACE, 300, 500, MLV_rgba(18,18,18,255));
+    //Efface l'affichage précédent des unités
+    MLV_draw_filled_rectangle(ESPACE + (LARG+0.5)*COTECASE, ESPACE, 300, WINDOW_HEIGHT, MLV_rgba(18,18,18,255));
 
     if(monde.bleu != NULL){
         Unite *actuel = monde.bleu;
         while(actuel != NULL) {
             x = ESPACE + (LARG+0.5)*COTECASE;
-            y = 5*COTECASE + ESPACE + compteur_bleu*50;
+            y = ESPACE + compteur*50;
 
             //Affiches les infos sous forme de texte
-            sprintf(message, "      (%d, %d), PV : %d/100", actuel->posX, actuel->posY, actuel->ptVie);
+            sprintf(message, "      (%d, %d), PV : %d/%d", actuel->posX, actuel->posY, actuel->ptVie, actuel->ptVieMax);
             MLV_draw_adapted_text_box(
                 x, y,
                 message,
@@ -1024,20 +1033,18 @@ void afficherUnites(Monde monde){
             }
             
             actuel = actuel->suiv;
-            compteur_bleu++;
+            compteur++;
         }
     }
-
-    rouge_offset = 0;
 
     if(monde.rouge != NULL){
         Unite *actuel = monde.rouge;
         while(actuel != NULL) {
-            x = ESPACE + (LARG+0.5)*COTECASE + rouge_offset;
-            y = 5*COTECASE + ESPACE + compteur_bleu*50;
+            x = ESPACE + (LARG+0.5)*COTECASE;
+            y = ESPACE + compteur*50;
 
             //Affiches les infos sous forme de texte
-            sprintf(message, "      (%d, %d), PV : %d/100", actuel->posX, actuel->posY, actuel->ptVie);
+            sprintf(message, "      (%d, %d), PV : %d/%d", actuel->posX, actuel->posY, actuel->ptVie, actuel->ptVieMax);
             MLV_draw_adapted_text_box(
                 x, y,
                 message,
@@ -1057,9 +1064,10 @@ void afficherUnites(Monde monde){
             }
             
             actuel = actuel->suiv;
-            compteur_bleu++;
+            compteur++;
         }
     }
+    MLV_actualise_window();
 
     MLV_free_image( guerrier_rouge_img );
     MLV_free_image( serf_rouge_img );
@@ -1069,7 +1077,7 @@ void afficherUnites(Monde monde){
     MLV_free_image( reine_bleu_img );
 }
 
-/* Fonction qui colore les case adjacentes à l'unité courante en vert si vide, vert transparent si allié et rouge tranparent si ennemi */
+/* Colore les case adjacentes à l'unité courante en vert si la case est vide, vert transparent si un allié est sur la case et rouge tranparent si ennemi */
 void colorerCasesAdj(Monde monde, Unite unite){
     int i, j, portee;
     MLV_Color couleur_case;

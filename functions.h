@@ -22,16 +22,21 @@
 
 /* Dimension du côté d'une case pour l'affichage graphique */
 #define COTECASE 45
+/* Cette constante correspond à l'espace en haut et à gauche du plateau */
+#define ESPACE 40
 
-/* Défini les dimension de la fenêtre en fonction d'autre variables */
-#define WINDOW_WIDTH (LARG+1+5)*COTECASE
-#define WINDOW_HEIGHT (LARG+1+5)*COTECASE
+/* Défini les dimensions de la fenêtre en fonction d'autre variables */
+#define WINDOW_WIDTH (LARG+1+6)*COTECASE
+#define WINDOW_HEIGHT (LONG+1+5)*COTECASE
+
+/* Défini les dimensions des boutons */
+#define BUTTON_WIDTH 170
+#define BUTTON_HEIGHT COTECASE-10
+#define ESPACE_ENTRE_BOUTONS COTECASE/4
+#define Y_PREMIER_BOUTON ESPACE + (LONG+.5)*COTECASE
 
 /* Durée d'attente entre les différents messages (en millisecondes). */
 #define TIME_DELAY 1500
-
-/* Cette constante correspond à l'espace en haut et à gauche du plateau */
-#define ESPACE 40
 
 /* Constante pour définir le nombre de caractères maximum du message */
 #define MESSAGE_MAX_SIZE 1000
@@ -41,7 +46,8 @@ typedef struct unite{
     int posX, posY; /* Pour stocker les coordonnées de l'unité */
     char couleur; /* ROUGE ou BLEU */
     char genre; /* GUERRIER ou SERF ou REINE */
-    int ptVie; /* Nombre de vie de l'unité */
+    int ptVie; /* Points de vie de l'unité */
+    int ptVieMax; /* Points de vie maximum de l'unité */
     int ptAttaque; /* Points d'attaque de l'unité */
     int ptMouvement; /* Points de mouvement de l'unité */
     int action; /* Entier qui vaudra 1 si l'unité peut effectuer une action ou 0 sinon */
