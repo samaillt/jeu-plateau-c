@@ -83,5 +83,6 @@ void ecrireMessage(char message[]);
 void effacerBoutons(void);
 void afficherUnites(Monde monde);
 void colorerCasesAdj(Monde monde, Unite unite);
+void colorerCaseCourante(Monde monde, Unite unite);
 
 #endif

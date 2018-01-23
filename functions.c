@@ -608,7 +608,7 @@ void gererDemiTour(char joueur, Monde *monde) {
                 sprintf(message, "Unité actuelle : %s (%d, %d)\nQue souhaitez-vous faire ?\n - Effectuer une (ou plusieurs) action(s) avec l'unité\n - Mettre l'unité en attente\n - Ne rien faire", nom_unite, actuel->posX, actuel->posY);
                 ecrireMessage(message);
 
-                colorerCasesAdj(*monde, *actuel);
+                colorerCaseCourante(*monde, *actuel);
 
                 if ((actuel->genre == REINE)) {
                     if (actuel->cptTour > 0) {
@@ -682,6 +682,7 @@ void gererDemiTour(char joueur, Monde *monde) {
 
                     if (actuel->genre == REINE){
                         if (actuel->cptTour < 0 && actuel->uniteEnProduction == 0){
+                            MLV_draw_filled_rectangle(actuel->posX*COTECASE + ESPACE, actuel->posY*COTECASE + ESPACE, COTECASE, COTECASE, MLV_rgba(120,50,255,50));
                             do {
                                 MLV_wait_mouse( &mouseX, &mouseY );
                                 if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
@@ -706,7 +707,6 @@ void gererDemiTour(char joueur, Monde *monde) {
                             } else {
                                 sprintf(message, "Il reste %d tour(s) de production", actuel->cptTour);
                             }
-                            
                             ecrireMessage(message);
                             MLV_wait_milliseconds(TIME_DELAY);
                         }
@@ -1083,11 +1083,9 @@ void colorerCasesAdj(Monde monde, Unite unite){
                     if (monde.plateau[unite.posY + j][unite.posX + i] == NULL) {
                         couleur_case = MLV_COLOR_PALE_GREEN; //Couleur vert pâle
                     } else if ((monde.plateau[unite.posY + j][unite.posX + i]->couleur == unite.couleur)) {
-                        couleur_case = MLV_rgba(50,255,50,50); //Couleur vert transparent
-                        MLV_draw_filled_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(50,255,50,50));
+                        couleur_case = MLV_rgba(50,255,50,35); //Couleur vert transparent
                     } else {
-                        couleur_case = MLV_rgba(255,50,50,50); //Couleur rouge transparent
-                        MLV_draw_filled_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(255,50,50,50));
+                        couleur_case = MLV_rgba(255,50,50,35); //Couleur rouge transparent
                     }
                 MLV_draw_filled_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, couleur_case);
                 MLV_draw_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_COLOR_BLACK);
@@ -1098,5 +1096,16 @@ void colorerCasesAdj(Monde monde, Unite unite){
             } 
         }
     }
+    MLV_actualise_window();
+}
+
+/* Fonction qui colore le contour de la case de l'unite courante en violet */
+void colorerCaseCourante(Monde monde, Unite unite){
+    MLV_Color couleur_case;
+
+    couleur_case = MLV_COLOR_PURPLE;
+    MLV_draw_rectangle(unite.posX*COTECASE + ESPACE - 1, unite.posY*COTECASE + ESPACE - 1, COTECASE + 2, COTECASE + 2, couleur_case);
+    MLV_draw_rectangle(unite.posX*COTECASE + ESPACE, unite.posY*COTECASE + ESPACE, COTECASE, COTECASE, couleur_case);
+
     MLV_actualise_window();
 }
