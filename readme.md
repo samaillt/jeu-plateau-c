@@ -27,6 +27,7 @@ A FAIRE AMELIO :
 - (Savoir si on chosit la case dans tout le plateau ou nom pour la prod d'unité)
 - Faire apparaître à chaque action les "cases contours" possibles
 afficher la vie et les dégâts
+- A chaque action possibilité de passer l'action
 - Afficher les compteurs de tour pour la production d'unité
 - Fin de la partie : QUand plus de reine dans une des deux listes
 
