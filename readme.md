@@ -11,6 +11,7 @@
 
 - Implémenter une interface graphique avec MLV (En cours)
 - Ajouter des images pour les unités etc
+
 ### Implémenter une interface graphique avec MLV :
 - [x] Ajouter des images pour les différentes unités
 - [ ] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso ?
@@ -18,8 +19,10 @@
 - [x] Cliquer sur les cases pour se déplacer et attaquer.
 - [x] Fin du tour : Bouton Continuer / Arrêter.
 - [x] Changer la couleur des cases lorsqu'on passe la souris dessus.
-- [ ] Afficher tous les textes dans le carré d'affichage
-- [ ] Guerrier : 2 cases de portées autour
+- [x] Afficher tous les textes dans le carré d'affichage
+- [x] Guerrier : 2 cases de portées autour
+- [x] Afficher le compteur de tours
+- [x] Afficher les images dans la liste des unités
 
 - FINIIIIIR LEEEE RAPPOOOOOORRTT !!!!!!!!!
 
@@ -35,4 +38,4 @@ afficher la vie et les dégâts
 
 - Vérifier le code (commentaire, virer les printf etc...)
 
-- Sauvegarde dans un fichier texte si on est chaud :) (Flemme)
+- Commenter les fonctions dans les fichiers en-tête

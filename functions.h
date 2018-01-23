@@ -23,8 +23,12 @@
 /* Dimension du côté d'une case pour l'affichage graphique */
 #define COTECASE 45
 
+/* Défini les dimension de la fenêtre en fonction d'autre variables */
 #define WINDOW_WIDTH (LARG+1+5)*COTECASE
 #define WINDOW_HEIGHT (LARG+1+5)*COTECASE
+
+/* Durée d'attente entre les différents messages (en millisecondes). */
+#define TIME_DELAY 1500
 
 /* Cette constante correspond à l'espace en haut et à gauche du plateau */
 #define ESPACE 40
@@ -77,5 +81,7 @@ void afficherListes(Monde monde);
 /* MLV Functions */
 void ecrireMessage(char message[]);
 void effacerBoutons(void);
+void afficherUnites(Monde monde);
+void colorerCasesAdj(Monde monde, Unite unite);
 
 #endif
