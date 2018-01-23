@@ -10,7 +10,13 @@
 - [x] Permettre aux joueurs de faire attendre les unités et de reprendre leur action plus tard (passer le tour de l'unité et revenir ensuite)
 - [ ] Sauvegarder la partie en cours dans un fichier pour pouvoir la reprendre plus tard (cf. sujet)
 
-### Implémenter une interface graphique avec MLV :
+
+### *Bugs à corriger*
+- [ ] Les reines peuvent attaquer n'importe où
+- [ ] Si il n'y a personne à côté à attaquer, passer à l'unité suivante (seulement si les points de mouvements sont à zéro)
+
+
+### Implémenter une interface graphique avec MLV
 - [x] Ajouter des images pour les différentes unités
 - [x] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso ?
 - [x] Cliquer sur les cases pour se positionner.
@@ -21,16 +27,16 @@
 - [x] Guerrier : 2 cases de portées autour
 - [x] Afficher le compteur de tours
 - [x] Afficher les images dans la liste des unités
+- [ ] *Afficher les points de mouvements en cours ?*
 
 
 A FAIRE AMELIO : 
 - FINIIIIIR LEEEE RAPPOOOOOORRTT !!!!!!!!!
 - (Savoir si on chosit la case dans tout le plateau ou nom pour la prod d'unité)
-- Faire apparaître à chaque action les "cases contours" possibles
-afficher la vie et les dégâts
+- afficher la vie et les dégâts
 - A chaque action possibilité de passer l'action
 - Afficher les compteurs de tour pour la production d'unité
-- Fin de la partie : QUand plus de reine dans une des deux listes
+- Fin de la partie : Quand plus de reine dans une des deux listes
 
 - Recheck l'expérience de jeu et rajouter pleins d'infos pour aider le joueur à savoir quoi faire
 
