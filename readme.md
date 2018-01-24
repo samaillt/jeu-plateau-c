@@ -12,8 +12,8 @@
 
 
 ### Bugs à corriger
-- [ ] **Les reines peuvent attaquer n'importe où**
-- [ ] **Si il n'y a personne à côté à attaquer, passer à l'unité suivante (seulement si les points de mouvements sont à zéro)**
+- [x] Les reines peuvent attaquer n'importe où
+- [x] Si il n'y a personne à côté à attaquer, passer à l'unité suivante (seulement si les points de mouvements sont épuisés)
 
 
 ### Implémenter une interface graphique avec MLV
