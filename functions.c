@@ -486,7 +486,7 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             MLV_draw_text_box(
                 ESPACE/2, Y_PREMIER_BOUTON,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                "Guerrier (4 tours)",
+                "Guerrier (2 tours)",
                 10,
                 MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
                 MLV_TEXT_CENTER,
@@ -495,7 +495,7 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             MLV_draw_text_box(
                 ESPACE/2, Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS, 
                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                "Serf (2 tours)",
+                "Serf (1 tours)",
                 10,
                 MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
                 MLV_TEXT_CENTER,
@@ -520,11 +520,11 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             }
 
             if (choix == 1){
-                unite->cptTour = 4;
+                unite->cptTour = 2;
                 unite->uniteEnProduction = GUERRIER;
                 sprintf(message, "Vous avez lancé la production d'un guerrier");
             } else {
-                unite->cptTour = 2;
+                unite->cptTour = 1;
                 unite->uniteEnProduction = SERF;
                 sprintf(message, "Vous avez lancé la production d'un serf");
             }
@@ -828,10 +828,10 @@ void gererDemiTour(char joueur, Monde *monde) {
         while (tmp != NULL){
             tmp->action = 0;
             if (tmp->genre == GUERRIER){
-                tmp->ptMouvement=2;
+                tmp->ptMouvement=4;
             }
             else if (tmp->genre == SERF){
-                tmp->ptMouvement=1;
+                tmp->ptMouvement=3;
             }
             else {
                 tmp->ptMouvement=0;
