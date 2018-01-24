@@ -161,21 +161,21 @@ int creerUnite(char type, UListe * unite){
     }
     u->genre = type;
     if (type == GUERRIER){
+        u->ptAttaque = 95;
+        u->ptVie = 150;
+        u->ptVieMax = 150;
+        u->ptMouvement=4;
+    }
+    else if (type == SERF){
         u->ptAttaque = 75;
         u->ptVie = 100;
         u->ptVieMax = 100;
-        u->ptMouvement=2;
-    }
-    else if (type == SERF){
-        u->ptAttaque = 50;
-        u->ptVie = 75;
-        u->ptVieMax = 75;
-        u->ptMouvement=1;
+        u->ptMouvement=3;
     }
     else if (type == REINE) {
-        u->ptAttaque = 75;
-        u->ptVie = 200;
-        u->ptVieMax = 200;
+        u->ptAttaque = 145;
+        u->ptVie = 300;
+        u->ptVieMax = 500;
         u->ptMouvement=0;
     }
     u->cptTour=-1;
