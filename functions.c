@@ -1183,3 +1183,13 @@ int attaquePossible(Monde monde, Unite unite){
     }
     return 0;
 }
+
+void playMusic(MLV_Music* music){
+    MLV_play_music( music, 1.0, -1 );
+}
+
+void stopMusic(MLV_Music* music){
+    MLV_stop_music();
+    MLV_free_music(music);
+    MLV_free_audio();
+}
