@@ -6,11 +6,13 @@
 #include <string.h>
 #include <time.h>
 #include <MLV/MLV_all.h>
+
 /* CONSTANTES */
+
 /* dimension du monde en nombre de cases */
+/* l'origine est en haut a gauche */
 #define LONG 12
 #define LARG 18
-/* l'origine est en haut a gauche */
 
 #define ROUGE 'R' /*identifiant du premier joueur */
 #define BLEU 'B' /* identifiant du deuxième joueur */
@@ -22,6 +24,7 @@
 
 /* Dimension du côté d'une case pour l'affichage graphique */
 #define COTECASE 45
+
 /* Cette constante correspond à l'espace en haut et à gauche du plateau */
 #define ESPACE 40
 
@@ -66,8 +69,14 @@ typedef struct monde{
 
 
 /* PROTOTYPES DES FONCTIONS */
+
+/* Fontion qui ne prend rien en paramètre et retourne un entier aléatoire entre 0 et 1, utilisée notamment pour la gestion d'élément éléatoire à deux possibilité */
 int random_0_1(void);
+
+/* Fontion qui ne prend rien en paramètre et retourne un entier aléatoire entre 1 et 9, utilisée notamment pour l'ajout ou la soustraction d'un nombre aléatoire de points d'attaque lors des combats */
 int random_0_9(void);
+
+/* Fonction qui ne prend pas de paramètre et ne retourne rien et initialise la fenêtre d'affichage graphique du jeu */
 void initialiserFenetre(void);
 
 /* Fonction qui ne retourne rien et prend en paramètre le monde et qui met la valeur de tous ses pointeurs et les cases du plateau à NULL et le compteur de tours a zéro */
@@ -113,8 +122,8 @@ void gererPartie(void);
 void afficherListes(Monde monde);
 
 
-
 /* MLV Functions */
+
 /* Fonction qui écrit un message en dessous du plateau de jeu */
 void ecrireMessage(char message[]);
 
