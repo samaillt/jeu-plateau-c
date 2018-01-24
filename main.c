@@ -4,7 +4,7 @@
 int main() {
     MLV_init_audio( );
 	MLV_Music* music = MLV_load_music("music/zelda_epique_cc.mp3");
-	playMusic(music);
+	MLV_play_music( music, 1.0, -1 );
 	initialiserFenetre();
 	gererPartie();
 	stopMusic(music);

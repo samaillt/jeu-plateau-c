@@ -15,7 +15,7 @@ void initialiserFenetre(void){
     /* Créé et affiche la fenêtre */
     MLV_create_window( "Jeu de plateau", "hello world", WINDOW_WIDTH, WINDOW_HEIGHT );
 
-    /* Affiche un fond gris */
+    /* Affiche un fond noir */
     MLV_draw_filled_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, MLV_rgba(0, 0, 0, 255));
 
     MLV_draw_rectangle(ESPACE/2 - 5, Y_PREMIER_BOUTON-5, BUTTON_WIDTH+10, 4*BUTTON_HEIGHT+10, MLV_rgba(50,50,50,255));
@@ -25,7 +25,6 @@ void initialiserFenetre(void){
 
 }
 
-/* Fonction qui ne retourne rien et prend en paramètre le monde et qui met la valeur de tous ses pointeurs et les cases du plateau à NULL et le compteur de tours a zéro */
 void initialiserMonde(Monde *monde){
     int i, j;
     for (i=0; i<LONG; i++) {
@@ -38,7 +37,6 @@ void initialiserMonde(Monde *monde){
     monde->bleu = NULL;
 }
 
-/* Fonction qui ne retourne rien prenant en paramètre le monde et qui affiche l’état actuel du plateau de jeu (à l'aide de la bibliothèque MLV) */
 void affichePlateau(Monde *monde){
     int i, j, k, random_number;
     int spaceX, spaceY;
@@ -151,7 +149,6 @@ void affichePlateau(Monde *monde){
     MLV_free_image( reine_bleu_img );
 }
 
-/* Fonction qui retourne un entier servant à la gestion d'erreur et prend en paramètre un type et une liste d'unité et alloue une nouvelle unite de type type, et stocke son adresse dans *unite */
 int creerUnite(char type, UListe * unite){
     Unite *u;
     u = malloc(sizeof(Unite));
@@ -186,7 +183,6 @@ int creerUnite(char type, UListe * unite){
     return 1;
 }
   
-/* Fonction qui ne retourne rien et prend en parametre une unite, sa couleur et le monde et qui permet à l'utilisateur d'entrer ses coordonnées en début de partie */
 void positionnerUnite(Unite *unite, Monde *monde, char couleur){
     int posX, posY, mouseX, mouseY, x, y, i, j, random_number;
     MLV_Image *guerrier_rouge_img, *guerrier_bleu_img, *serf_rouge_img, *serf_bleu_img, *reine_rouge_img, *reine_bleu_img;
@@ -319,7 +315,6 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
     MLV_free_image( reine_bleu_img );
 }
 
-/* Fonction qui retourne un entier permettant la gestion d'erreur et prend en paramètre une unité, les coordonnées auxquelles la placer, sa couleur et le monde. Elle place une unité qui vient d’être créée à la position souhaitée dans le monde sous le contrôle de son nouveau maître */
 int placerAuMonde(Unite *unite, Monde *monde, int posX, int posY, char couleur){
     Unite *tmp = malloc(sizeof(Unite));
     if (tmp == NULL) {
@@ -350,11 +345,6 @@ int placerAuMonde(Unite *unite, Monde *monde, int posX, int posY, char couleur){
     }
 }
 
-// void produireUnite(){
-
-// }
-
-/* Fonction qui ne retourne rien et prend en paramètre une unité, les coordonnées du déplacement et le monde et qui déplace une unité vers une case spécifiée par les coordonnées */
 void deplacerUnite(Unite *unite, Monde *monde, int destX, int destY) {
     monde->plateau[unite->posY][unite->posX] = NULL;
     unite->posX = destX;
@@ -362,7 +352,6 @@ void deplacerUnite(Unite *unite, Monde *monde, int destX, int destY) {
     monde->plateau[unite->posY][unite->posX] = unite;
 }
 
-/* Fonction qui ne retourne rien et prend en paramètre une unité et le monde et qui enlève l’unité du jeu (l'enlève donc du plateau et de la liste des unités et libère la mémoire) */
 void enleverUnite(Unite *unite, Monde *monde) {
     monde->plateau[unite->posY][unite->posX] = NULL;
     if (unite->couleur == ROUGE){
@@ -401,7 +390,6 @@ void enleverUnite(Unite *unite, Monde *monde) {
     }
 }
 
-/* Fonction qui retourne un paramètre indiquant le résultat du combat et qui prend en paramètre une unité, les coordonnées da l'attaque et qui qui gère le combat selon les règles du jeu (.cf sujet) */
 int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
     Unite *attaquant, *defenseur;
     int degats;
@@ -459,7 +447,6 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
     return 0;
 }
 
-/* Fonction qui remplace deplacerOuAttaquer et retourne un entier en paramètre pour la gestion d'erreur et au resultat et qui prend en paramètre une unité, les coordonnées de l'action et le monde et qui qui gère le déplacements et le combat */
 int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
     char message[MESSAGE_MAX_SIZE];
     int choix, mouseX, mouseY;
@@ -593,7 +580,6 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
     }
 }
 
-/* Fonction qui ne retourne rien et prend en paramètre le joueur et le monde et qui gère toutes les actions d’un joueur pendant son tour */
 void gererDemiTour(char joueur, Monde *monde) {
     /* Parcourir les unités du joueur */
     int choix, x, y, uniteEnAttente, mouseX, mouseY, compteur_tour;
@@ -769,10 +755,8 @@ void gererDemiTour(char joueur, Monde *monde) {
                     actuel->action=1;
                     actuel = actuel->suiv;
                 } else if (choix == 2) {
-                    printf("L'utilisateur souhaite mettre l'unité en attente, on passe à l'unité suivante.\n");
                     actuel = actuel->suiv;
                 } else if (choix == 3) {
-                    printf("L'utilisateur souhaite ne rien faire avec cette unité, on passe à l'unité suivante.\n");
                     actuel->action = 1;
                     actuel = actuel->suiv;
                 }
@@ -841,25 +825,21 @@ void gererDemiTour(char joueur, Monde *monde) {
     }
 }
 
-/* Fonction qui ne retourne rien et prend en paramètre le monde et qui gère un tour de jeu complet */
 void gererTour(Monde *monde){
     char joueurBleu = BLEU; /* Déclaration et initialisation du joueur bleu */
     char joueurRouge = ROUGE; /* Déclaration et initialisation du joueur rouge */
     int nbAlea = random_0_1();
     if (nbAlea == 0){
-        printf("C'est au joueur Bleu de commencer\n");
         gererDemiTour(joueurBleu, monde); /* Tour du joueur 1 */
         gererDemiTour(joueurRouge, monde); /* Tour du joueur 2 */
     }
     else{
-        printf("C'est au joueur Rouge de commencer\n");
         gererDemiTour(joueurRouge, monde); /* Tour du joueur 1 */
         gererDemiTour(joueurBleu, monde); /* Tour du joueur 2 */
     }
     monde->tour+=1; /* Incrémentation du compteur de tours */
 }
 
-/* Fonction qui ne retourne rien et prend en paramètre le monde et qui le réinitialise et vide proprement la mémoire utilisée par les unités notamment */
 void viderMonde(Monde *monde){
     /* Vide la mémoire de toutes les unités de la liste rouge du monde */
     while (monde->rouge != NULL){
@@ -877,7 +857,6 @@ void viderMonde(Monde *monde){
     initialiserMonde(monde);
 }
 
-/* Fonction qui ne retourne rien et ne prend pas de paramètre et qui gère une partie de jeu */
 void gererPartie(void){
     Monde monde; /* Déclaration du monde */
     int arreterPartie, mouseX, mouseY;
@@ -969,7 +948,6 @@ void gererPartie(void){
     viderMonde(&monde);
 }
 
-/* Fontion qui ne retourne rien et prend en paramètre le monde et affiche le contenu des listes des deux joueurs (Très utile pour le débugage des fonctions liées aux listes) */
 void afficherListes(Monde monde){
     printf("Liste bleu : \n");
     if(monde.bleu != NULL){
@@ -1011,7 +989,6 @@ void effacerBoutons(){
 }
 
 
-/* Fontion qui ne retourne rien et prend en paramètre le monde pour afficher le contenu des listes des deux joueurs dans l'interface graphique */
 void afficherUnites(Monde monde){
     int compteur, x, y;
     char message[MESSAGE_MAX_SIZE];
@@ -1105,7 +1082,6 @@ void afficherUnites(Monde monde){
     MLV_free_image( reine_bleu_img );
 }
 
-/* Colore les case adjacentes à l'unité courante en vert si la case est vide, vert transparent si un allié est sur la case et rouge tranparent si ennemi */
 void colorerCasesAdj(Monde monde, Unite unite){
     int i, j, portee;
     MLV_Color couleur_case;
@@ -1135,7 +1111,6 @@ void colorerCasesAdj(Monde monde, Unite unite){
     MLV_actualise_window();
 }
 
-/* Fonction qui colore le contour de la case de l'unite courante en violet */
 void colorerCaseCourante(Monde monde, Unite unite){
     MLV_Color couleur_case;
     // couleur_case = MLV_COLOR_PURPLE;
@@ -1145,7 +1120,6 @@ void colorerCaseCourante(Monde monde, Unite unite){
     MLV_actualise_window();
 }
 
-/* Fonction qui affiche le numéro du tour et quel joueur est en train de jouer */
 void afficherTourJoueur(int num_tour, char couleur[]){
     char message[MESSAGE_MAX_SIZE];
     MLV_Color couleur_texte;
@@ -1153,7 +1127,6 @@ void afficherTourJoueur(int num_tour, char couleur[]){
 
     if (strcmp(couleur, "Bleu"))
     {
-        // couleur_texte = MLV_rgba(255,50,50,255);
         couleur_texte = MLV_COLOR_INDIANRED3;
     } else {
         couleur_texte = MLV_COLOR_SKYBLUE3;
@@ -1169,7 +1142,6 @@ void afficherTourJoueur(int num_tour, char couleur[]){
     MLV_actualise_window();
 }
 
-/* Colore les case adjacentes occupées par un ennemi */
 void colorerCasesEnnemies(Monde monde, Unite unite){
     int i, j, portee;
     MLV_Color couleur_case;
@@ -1197,7 +1169,6 @@ void colorerCasesEnnemies(Monde monde, Unite unite){
     MLV_actualise_window();
 }
 
-/* Vérifie si un ennemi se trouve à la portée de l'unite passée en paramètre */
 int attaquePossible(Monde monde, Unite unite){
     int i, j, portee;
     portee = 1;
@@ -1217,10 +1188,6 @@ int attaquePossible(Monde monde, Unite unite){
         }
     }
     return 0;
-}
-
-void playMusic(MLV_Music* music){
-    MLV_play_music( music, 1.0, -1 );
 }
 
 void stopMusic(MLV_Music* music){

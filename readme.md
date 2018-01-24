@@ -30,16 +30,14 @@
 - [ ] **Afficher les points de mouvements en cours ?**
 
 
-A FAIRE AMELIO : 
-- FINIIIIIR LEEEE RAPPOOOOOORRTT !!!!!!!!!
-- (Savoir si on chosit la case dans tout le plateau ou nom pour la prod d'unité)
-- afficher la vie et les dégâts
+A faire : 
+- Finir le rapport
+
+Pour aller plus loin :
+- Afficher la vie et les dégâts
 - A chaque action possibilité de passer l'action
 - Afficher les compteurs de tour pour la production d'unité
 - Fin de la partie : Quand plus de reine dans une des deux listes
-
-- Recheck l'expérience de jeu et rajouter pleins d'infos pour aider le joueur à savoir quoi faire
-
 - Vérifier le code (commentaire, virer les printf etc...)
 
 - Commenter les fonctions dans les fichiers en-tête
