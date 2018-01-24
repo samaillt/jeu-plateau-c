@@ -18,6 +18,7 @@ void initialiserFenetre(void){
     /* Affiche un fond noir */
     MLV_draw_filled_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, MLV_rgba(0, 0, 0, 255));
 
+    /* Créer un carré autour de l'espace des boutons */
     MLV_draw_rectangle(ESPACE/2 - 5, Y_PREMIER_BOUTON-5, BUTTON_WIDTH+10, 4*BUTTON_HEIGHT+10, MLV_rgba(50,50,50,255));
 
     /* Met a jour l'affichage de la fenêtre. */
@@ -147,6 +148,8 @@ void affichePlateau(Monde *monde){
     MLV_free_image( guerrier_bleu_img );
     MLV_free_image( serf_bleu_img );
     MLV_free_image( reine_bleu_img );
+    MLV_free_image( texture_01 );
+    MLV_free_image( texture_02 );
 }
 
 int creerUnite(char type, UListe * unite){
@@ -161,19 +164,19 @@ int creerUnite(char type, UListe * unite){
         u->ptAttaque = 95;
         u->ptVie = 150;
         u->ptVieMax = 150;
-        u->ptMouvement=4;
+        u->ptMouvement = 4;
     }
     else if (type == SERF){
         u->ptAttaque = 75;
         u->ptVie = 100;
         u->ptVieMax = 100;
-        u->ptMouvement=3;
+        u->ptMouvement = 3;
     }
     else if (type == REINE) {
         u->ptAttaque = 145;
         u->ptVie = 300;
-        u->ptVieMax = 500;
-        u->ptMouvement=0;
+        u->ptVieMax = 300;
+        u->ptMouvement = 0;
     }
     u->cptTour=-1;
     u->action = 0;
@@ -313,6 +316,8 @@ void positionnerUnite(Unite *unite, Monde *monde, char couleur){
     MLV_free_image( guerrier_bleu_img );
     MLV_free_image( serf_bleu_img );
     MLV_free_image( reine_bleu_img );
+    MLV_free_image( texture_01 );
+    MLV_free_image( texture_02 );
 }
 
 int placerAuMonde(Unite *unite, Monde *monde, int posX, int posY, char couleur){
@@ -482,7 +487,7 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             MLV_draw_text_box(
                 ESPACE/2, Y_PREMIER_BOUTON + BUTTON_HEIGHT + ESPACE_ENTRE_BOUTONS, 
                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                "Serf (1 tours)",
+                "Serf (1 tour)",
                 10,
                 MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE,
                 MLV_TEXT_CENTER,
