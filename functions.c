@@ -691,6 +691,7 @@ void gererDemiTour(char joueur, Monde *monde) {
                     if (actuel->genre == REINE){
                         if (actuel->cptTour < 0 && actuel->uniteEnProduction == 0){
                             MLV_draw_filled_rectangle(actuel->posX*COTECASE + ESPACE, actuel->posY*COTECASE + ESPACE, COTECASE, COTECASE, MLV_rgba(120,50,255,50));
+                            colorerCasesEnnemies(*monde, *actuel);
                             do {
                                 MLV_wait_mouse( &mouseX, &mouseY );
                                 if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
