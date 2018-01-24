@@ -418,7 +418,7 @@ int attaquer(Unite *unite, Monde *monde, int posX, int posY) {
         ecrireMessage(message);
         MLV_wait_milliseconds(TIME_DELAY);
         defenseur->ptVie -= degats;
-        sprintf(message, "Points de vie restant du défenseur = %d",defenseur->ptVie );
+        sprintf(message, "Points de vie restant du défenseur = %d", defenseur->ptVie );
         ecrireMessage(message);
         MLV_wait_milliseconds(TIME_DELAY);
         return 0;
@@ -521,8 +521,7 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
                 return 3;
             }
         }
-    }
-    else {
+    } else {
         /* Si les coordonnées sont invalides, la fonction retourne -1 */
         if (destX < 0 || destX > 17 || destY < 0 || destY > 11) {
             return -1;
@@ -721,7 +720,17 @@ void gererDemiTour(char joueur, Monde *monde) {
                         }
                     } else {
                         while (actuel->ptMouvement+1 > 0){
-                            colorerCasesAdj(*monde, *actuel);
+                            if (actuel->ptMouvement+1 > 1) {
+                                colorerCasesAdj(*monde, *actuel);
+                            } else {
+                                /* DETECTER si des ennemis sont autour de l'unité actuel, si oui, attaque possible (case rouge), sinon bouton "Passer à l'unité suivante" */
+                                if (attaquePossible(*monde, *actuel) == 1){
+                                    //On colore les cases en rouge
+                                    colorerCasesEnnemies(*monde, *actuel);
+                                } else {
+                                    break;
+                                }
+                            }
                             do {
                                 MLV_wait_mouse( &mouseX, &mouseY );
                                 if ((mouseX < (LARG*COTECASE + ESPACE)) && (mouseX > ESPACE) && (mouseY < (LONG*COTECASE + ESPACE)) && (mouseY > ESPACE)) {
@@ -1136,4 +1145,54 @@ void afficherTourJoueur(int num_tour, char couleur[]){
         MLV_TEXT_LEFT
     );
     MLV_actualise_window();
+}
+
+/* Colore les case adjacentes occupées par un ennemi */
+void colorerCasesEnnemies(Monde monde, Unite unite){
+    int i, j, portee;
+    MLV_Color couleur_case;
+    portee = 1;
+    for (i = -portee; i <= portee; ++i)
+    {
+        for (j = -portee; j <= portee; ++j)
+        {
+            if ((unite.posY + j >= 0) && (unite.posX + i >= 0) && (unite.posY + j < LONG) && (unite.posX + i < LARG)) {
+                if ((i != 0) || (j != 0)) {
+                    if (monde.plateau[unite.posY + j][unite.posX + i] != NULL) {
+                        if (monde.plateau[unite.posY + j][unite.posX + i]->couleur != unite.couleur) {
+                            couleur_case = MLV_rgba(255,50,50,60);
+                            MLV_draw_filled_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, couleur_case);
+                            MLV_draw_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_COLOR_BLACK);
+                        }
+                    }
+                } else {
+                    MLV_draw_rectangle((unite.posX*COTECASE) + (i*COTECASE + ESPACE), (unite.posY*COTECASE) + (j*COTECASE + ESPACE), COTECASE, COTECASE, MLV_rgba(120,0,255,255));
+                }
+                
+            } 
+        }
+    }
+    MLV_actualise_window();
+}
+
+/* Vérifie si un ennemi se trouve à la portée de l'unite passée en paramètre */
+int attaquePossible(Monde monde, Unite unite){
+    int i, j, portee;
+    portee = 1;
+    for (i = -portee; i <= portee; ++i)
+    {
+        for (j = -portee; j <= portee; ++j)
+        {
+            if ((unite.posY + j >= 0) && (unite.posX + i >= 0) && (unite.posY + j < LONG) && (unite.posX + i < LARG)) {
+                if ((i != 0) || (j != 0)) {
+                    if (monde.plateau[unite.posY + j][unite.posX + i] != NULL) {
+                        if (monde.plateau[unite.posY + j][unite.posX + i]->couleur != unite.couleur) {
+                            return 1;
+                        }
+                    }
+                }
+            } 
+        }
+    }
+    return 0;
 }

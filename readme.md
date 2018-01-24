@@ -8,17 +8,17 @@
 - [x] Rajouter une unité Reine qui peut produire des unités (avec limite max d'unité et donc une valeur pour chaque unité ex serf : 1 et guerrier : 2)
 - [x] Permettre de se déplacer puis d'attaquer
 - [x] Permettre aux joueurs de faire attendre les unités et de reprendre leur action plus tard (passer le tour de l'unité et revenir ensuite)
-- [ ] Sauvegarder la partie en cours dans un fichier pour pouvoir la reprendre plus tard (cf. sujet)
+- [ ] **Sauvegarder la partie en cours dans un fichier pour pouvoir la reprendre plus tard (cf. sujet)**
 
 
-### **Bugs à corriger**
-- [ ] Les reines peuvent attaquer n'importe où
-- [ ] Si il n'y a personne à côté à attaquer, passer à l'unité suivante (seulement si les points de mouvements sont à zéro)
+### Bugs à corriger
+- [ ] **Les reines peuvent attaquer n'importe où**
+- [ ] **Si il n'y a personne à côté à attaquer, passer à l'unité suivante (seulement si les points de mouvements sont à zéro)**
 
 
 ### Implémenter une interface graphique avec MLV
 - [x] Ajouter des images pour les différentes unités
-- [x] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso ?
+- [x] Penser à libérer les images `MLV_free_image( image );` à la suppression du perso
 - [x] Cliquer sur les cases pour se positionner.
 - [x] Cliquer sur les cases pour se déplacer et attaquer.
 - [x] Fin du tour : Bouton Continuer / Arrêter.

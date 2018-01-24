@@ -91,5 +91,7 @@ void afficherUnites(Monde monde);
 void colorerCasesAdj(Monde monde, Unite unite);
 void colorerCaseCourante(Monde monde, Unite unite);
 void afficherTourJoueur(int num_tour, char couleur[]);
+int attaquePossible(Monde monde, Unite unite);
+void colorerCasesEnnemies(Monde monde, Unite unite);
 
 #endif
