@@ -436,7 +436,7 @@ int actionUnite(Unite *unite, Monde *monde, int destX, int destY) {
             return -1;
         }    
         /* Si la case marquée par les coordonnées n'est pas voisine à celle où l’unité en question se trouve, la fonction retourne -2 */
-        if (unite->genre == SERF && (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 )) {
+        if (destX > unite->posX + 1 || destX < unite->posX - 1 || destY > unite->posY + 1 || destY < unite->posY - 1 ) {
             return -2;
         }
         /* Si la case marquée par les coordonnées est déjà occupée par une unité alliée, la fonction retourne -3 */
